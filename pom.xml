@@ -4,13 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.freehoon.u4</groupId>
-    <artifactId>u4</artifactId>
+    <groupId>com.example</groupId>
+    <artifactId>SpringClass</artifactId>
+    <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <org.springframework-version>5.1.9.RELEASE
-        </org.springframework-version>
+        <java-version>1.8</java-version>
+        <org.springframework-version>5.2.16.RELEASE</org.springframework-version>
     </properties>
     <dependencies>
         <dependency>
@@ -25,8 +26,9 @@
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
