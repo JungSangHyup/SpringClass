@@ -16,4 +16,5 @@
         <property name="order" value="1"/>
     </bean>
     <context:component-scan base-package="com.freehoon.u4"/>
+    <mvc:resources mapping="/resources/**" location="/resources/" />
 </beans>
