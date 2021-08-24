@@ -10,7 +10,7 @@
 <html lang="ko" class="h-100">
 <head>
     <%-- include head.jsp --%>
-    <jsp:include page="/include/head.jsp"/>
+    <jsp:include page="/WEB-INF/views/include/head.jsp"/>
     <title>Login</title>
 </head>
 <body class="text-center">
@@ -61,7 +61,7 @@
 </form>
 
 <%--    include javascript.js--%>
-<jsp:include page="/include/javascript.jsp"/>
+<jsp:include page="/WEB-INF/views/include/javascript.jsp"/>
 
 </body>
 </html>

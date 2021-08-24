@@ -10,11 +10,11 @@
 <html lang="ko">
     <head>
         <%-- include head.jsp --%>
-        <jsp:include page="include/head.jsp"/>
+        <jsp:include page="/WEB-INF/views/include/head.jsp"/>
     </head>
     <body>
-    <%-- include topNavbar.jsp --%>
-    <jsp:include page="include/topNavbar.jsp"/>
+        <%-- include topNavbar.jsp --%>
+        <jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
 
     <!-- Carousel -->
     <div id="carouselExampleControls" class="carousel slide container" data-ride="carousel">
@@ -115,10 +115,10 @@
 
 
     <%--    include bottomFooter.jsp--%>
-    <jsp:include page="include/bottomFooter.jsp"/>
+    <jsp:include page="/WEB-INF/views/include/bottomFooter.jsp"/>
 
 
     <%--    include javascript.js--%>
-    <jsp:include page="include/javascript.jsp"/>
+    <jsp:include page="/WEB-INF/views/include/javascript.jsp"/>
     </body>
 </html>

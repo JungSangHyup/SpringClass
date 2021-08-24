@@ -13,8 +13,8 @@
     <jsp:include page="/WEB-INF/views/include/head.jsp"/>
 </head>
 <body>
-<%-- include topNavbar.jsp --%>
-<jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
+    <%-- include topNavbar.jsp --%>
+    <jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
 
 
 
@@ -54,7 +54,7 @@
 
                 <hr class="featurette-divider">
 
-                <form action="" method="POST">
+                <form action="/member/join" method="POST">
                     <div class="form-group">
                         <label for="id">
                             <i class="material-icons align-middle">account_box</i>
@@ -126,18 +126,6 @@
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="recvEmail" id="recvEmailNo" value="N">
                             <label class="form-check-label" for="recvEmailNo">동의 안함</label>
-                        </div>
-                    </div>
-
-                    <div class="text-center">
-                        <label class="mr-3">이벤트 등 알림 메일 수신동의 : </label>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline1" name="customRadioInline" class="custom-control-input" checked>
-                            <label class="custom-control-label" for="customRadioInline1">동의함</label>
-                        </div>
-                        <div class="custom-control custom-radio custom-control-inline">
-                            <input type="radio" id="customRadioInline2" name="customRadioInline" class="custom-control-input">
-                            <label class="custom-control-label" for="customRadioInline2">동의 안함</label>
                         </div>
                     </div>
 
