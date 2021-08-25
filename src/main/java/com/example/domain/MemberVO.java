@@ -1,6 +1,7 @@
 package com.example.domain;
 
 import lombok.Data;
+import java.util.Date;
 
 @Data
 public class MemberVO {
@@ -11,5 +12,5 @@ public class MemberVO {
     private String gender;
     private String email;
     private String recvEmail;
-    private String regDate;
+    private Date regDate;
 }

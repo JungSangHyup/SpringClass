@@ -1,10 +1,14 @@
 package com.example.controller;
 
 import com.example.domain.MemberVO;
-import com.example.mapper.MemberMapper;
-import org.mybatis.spring.annotation.MapperScan;
+import com.example.service.MemberService;
+import com.example.util.Script;
+import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +21,10 @@ import java.util.Date;
 @ComponentScan
 @RequestMapping("/member/*")
 
-@Configuration
-@MapperScan("com.example.mapper")
 public class MemberController {
-    private MemberMapper memberMapper;
+    @Autowired
+    private MemberService memberService;
+
 
     @GetMapping("/join")
     public String join(){
@@ -28,14 +32,34 @@ public class MemberController {
         return "member/join";
     }
 
+    @GetMapping("/login")
+    public String login(){
+        return "member/login";
+    }
+
     @PostMapping("/join")
-    public String join(MemberVO memberVO){
+    public ResponseEntity join(MemberVO memberVO){
+        // password encryption
+        String passwd = memberVO.getPasswd();
+        String hashedPw = BCrypt.hashpw(passwd, BCrypt.gensalt());
+        memberVO.setPasswd(hashedPw);
+
+        //birhday without '-'
         String birthday = memberVO.getBirthday();
         birthday = birthday.replace("-", "");
         memberVO.setBirthday(birthday);
-        memberVO.setRegDate(String.valueOf(new Date()));
-        memberMapper.insert(memberVO);
+
+        // current date
+        memberVO.setRegDate(new Date());
+
         System.out.println(memberVO);
-        return "member/login";
+        memberService.register(memberVO);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html;charset=UTF-8");
+
+        String str = Script.href("회원가입 성공!", "/member/login");
+
+        return new ResponseEntity<String>(str, headers, HttpStatus.OK);
     }
 }

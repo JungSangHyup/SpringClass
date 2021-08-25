@@ -28,7 +28,7 @@
                     <a class="nav-link" href="/member/join">회원가입</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="${pageContext.request.contextPath}/member/login.jsp">로그인</a>
+                    <a class="nav-link" href="${pageContext.request.contextPath}/member/login">로그인</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">로그아웃</a>
