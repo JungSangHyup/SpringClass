@@ -15,7 +15,6 @@
     <body>
         <%-- include topNavbar.jsp --%>
         <jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
-
     <!-- Carousel -->
     <div id="carouselExampleControls" class="carousel slide container" data-ride="carousel">
         <div class="carousel-inner">
