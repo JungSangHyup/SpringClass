@@ -1,5 +1,7 @@
 package com.example.service;
 
+import com.example.domain.BoardVO;
+import com.example.domain.Criteria;
 import com.example.domain.MemberVO;
 import com.example.mapper.MemberMapper;
 import org.springframework.stereotype.Service;
@@ -8,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+//@Transactional
 public class MemberService {
     // 생성자에서는 Autowired 생략 가능
     private MemberMapper memberMapper;
@@ -37,6 +39,7 @@ public class MemberService {
     public int deleteMemberById(String id){
         return memberMapper.deleteMemberById(id);
     }
+
     public void updateMember(MemberVO memberVO){
         memberMapper.updateMember(memberVO);
     }

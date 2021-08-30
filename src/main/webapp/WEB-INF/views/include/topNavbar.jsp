@@ -58,7 +58,7 @@
                         role="button" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false"> 게시판 </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/board/boardList.jsp">게시판</a>
+                        <a class="dropdown-item" href="/board/list">게시판</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">갤러리</a>
                     </div></li>

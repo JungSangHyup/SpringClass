@@ -14,4 +14,7 @@
 <!--        테이블의 컬럼명과 VO객체의 setter명 연결 규칙 설정-->
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
+    <typeAliases>
+        <package name="com.example.domain"/>
+    </typeAliases>
 </configuration>

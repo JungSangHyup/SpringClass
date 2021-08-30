@@ -1,9 +1,14 @@
 package com.example.domain;
 
-import lombok.Data;
+import lombok.*;
+
 import java.util.Date;
 
-@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 public class MemberVO {
     private String id;
     private String passwd;

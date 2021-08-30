@@ -1,22 +1,17 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<%--
-  Created by IntelliJ IDEA.
-  User: jsh1703
-  Date: 2021-08-23
-  Time: 오후 2:24
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <%-- include head.jsp --%>
-    <jsp:include page="/include/head.jsp"/>
-    <title>BoardList</title>
+    <jsp:include page="/WEB-INF/views/include/head.jsp" />
 </head>
 <body>
 <%-- include topNavbar.jsp --%>
-<jsp:include page="/include/topNavbar.jsp"/>
+<jsp:include page="/WEB-INF/views/include/topNavbar.jsp" />
 
 
 
@@ -76,78 +71,30 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td class="text-center">10</td>
-                        <td>
-                            <a href="/board/boardContent.jsp">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</a>
-                        </td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">15000</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">9</td>
-                        <td>Vivamus viverra porttitor commodo.</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">150</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">8</td>
-                        <td>In pulvinar fermentum erat a tincidunt. Nulla id magna sit ...</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">15000</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">7</td>
-                        <td>Sed diam velit, dictum a iaculis sed, tempor sed mi.</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">150</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">6</td>
-                        <td>Nullam ac dignissim diam. Mauris vitae magna ipsum,</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">15</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">5</td>
-                        <td>eget vehicula metus. In euismod sollicitudin lorem eu.</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">15000</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">4</td>
-                        <td>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">1500</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">3</td>
-                        <td>Vivamus viverra porttitor commodo.</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">15</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">2</td>
-                        <td>In pulvinar fermentum erat a tincidunt. Nulla id magna sit ...</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">15</td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">1</td>
-                        <td>Nullam ac dignissim diam. Mauris vitae magna ipsum,</td>
-                        <td class="text-center">user1</td>
-                        <td class="text-center">2021.08.20</td>
-                        <td class="text-center">150</td>
-                    </tr>
+
+                    <c:choose>
+                        <c:when test="${ pageMaker.totalCount gt 0 }">
+
+                            <c:forEach var="board" items="${ boardList }">
+                                <tr>
+                                    <td class="text-center">${ board.num }</td>
+                                    <td>
+                                        <a href="/board/boardContent.jsp">${ board.subject }</a>
+                                    </td>
+                                    <td class="text-center">${ board.mid }</td>
+                                    <td class="text-center"><fmt:formatDate value="${ board.regDate }" pattern="yyyy.MM.dd" /></td>
+                                    <td class="text-center">${ board.readcount }</td>
+                                </tr>
+                            </c:forEach>
+
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td colspan="5" class="text-center">게시판 글이 없습니다.</td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
+
                     </tbody>
                 </table>
 
@@ -201,11 +148,12 @@
 
 
 
-<%--    include bottomFooter.jsp--%>
-<jsp:include page="/include/bottomFooter.jsp"/>
+<%-- include bottomFooter.jsp --%>
+<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp" />
 
-<%--    include javascript.js--%>
-<jsp:include page="/include/javascript.jsp"/>
+
+<%-- include javascripts.jsp --%>
+<jsp:include page="/WEB-INF/views/include/javascript.jsp" />
 
 </body>
 </html>
