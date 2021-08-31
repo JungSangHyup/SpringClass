@@ -51,11 +51,15 @@
 
                 <hr class="featurette-divider">
 
-                <!-- 새글쓰기 버튼 -->
-                <button type="button" class="btn btn-primary btn-sm float-right my-3" onclick="location.href = '/board/boardWrite.jsp';">
-                    <i class="material-icons align-middle">create</i>
-                    <span class="align-middle">새글쓰기</span>
-                </button>
+                <c:if test="${ not empty sessionScope.id }">
+                    <!-- 새글쓰기 버튼 -->
+                    <button type="button" class="btn btn-primary btn-sm float-right my-3" onclick="location.href = '/board/write';">
+                        <i class="material-icons align-middle">create</i>
+                        <span class="align-middle">새글쓰기</span>
+                    </button>
+                </c:if>
+
+
 
                 <div class="clearfix"></div>
 
@@ -79,7 +83,7 @@
                                 <tr>
                                     <td class="text-center">${ board.num }</td>
                                     <td>
-                                        <a href="/board/boardContent.jsp">${ board.subject }</a>
+                                        <a href="/board/content?num=${ board.num }&pageNum=${ pageMaker.cri.pageNum}">${ board.subject }</a>
                                     </td>
                                     <td class="text-center">${ board.mid }</td>
                                     <td class="text-center"><fmt:formatDate value="${ board.regDate }" pattern="yyyy.MM.dd" /></td>
@@ -128,7 +132,7 @@
 
 
                 <!-- Search area -->
-                <form class="form-inline justify-content-center my-4">
+                <form class="form-inline justify-content-center my-4" action="/board/list" method="get">
 
                     <div class="form-group mx-3">
                         <label for="searchType">검색 조건</label>

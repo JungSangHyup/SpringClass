@@ -42,4 +42,13 @@ public class BoardService {
     public int getTotalCount(){
         return boardMapper.getTotalCount();
     }
+
+    public BoardVO getBoard(int num){
+        return boardMapper.getBoard(num);
+    }
+
+    public void updateReadcount(int num){
+        boardMapper.updateReadcount(num);
+    }
+
 }

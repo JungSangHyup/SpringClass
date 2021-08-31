@@ -6,16 +6,18 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <%-- include head.jsp --%>
-    <jsp:include page="/include/head.jsp"/>
+    <jsp:include page="/WEB-INF/views/include/head.jsp"/>
     <title>BoardContent</title>
 </head>
 <body>
-<%-- include topNavbar.jsp --%>
-<jsp:include page="/include/topNavbar.jsp"/>
+    <%-- include topNavbar.jsp --%>
+    <jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
 
 
 
@@ -59,32 +61,28 @@
                 <table class="table table-striped">
                     <tr>
                         <th scope="row" class="text-center">제목</th>
-                        <td colspan="5">글제목 입니다.</td>
+                        <td colspan="5">${ board.subject }</td>
                     </tr>
                     <tr>
                         <th scope="row" class="text-center">작성자</th>
-                        <td>user1</td>
+                        <td>${ board.mid }</td>
                         <th scope="row" class="text-center">작성일</th>
-                        <td>2021.08.20</td>
+                        <td><fmt:formatDate value="${ board.regDate }" pattern="yyyy.MM.dd" /></td>
                         <th scope="row" class="text-center">조회수</th>
-                        <td>2702</td>
+                        <td>${ board.readcount }</td>
                     </tr>
-                    <tr>
-                        <th scope="row" class="text-center">추천</th>
-                        <td class="text-primary">264</td>
-                        <th scope="row" class="text-center">비추천</th>
-                        <td class="text-danger">7</td>
-                        <th scope="row" class="text-center">댓글</th>
-                        <td>70</td>
-                    </tr>
+<%--                    <tr>--%>
+<%--                        <th scope="row" class="text-center">추천</th>--%>
+<%--                        <td class="text-primary">264</td>--%>
+<%--                        <th scope="row" class="text-center">비추천</th>--%>
+<%--                        <td class="text-danger">7</td>--%>
+<%--                        <th scope="row" class="text-center">댓글</th>--%>
+<%--                        <td>70</td>--%>
+<%--                    </tr>--%>
                     <tr>
                         <th scope="row" class="text-center">내용</th>
                         <td colspan="5">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.<br>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            <pre>${ board.content }</pre>
                         </td>
                     </tr>
                     <tr>
@@ -103,19 +101,25 @@
 
 
                 <div class="text-right mt-4">
-                    <button type="button" class="btn btn-info btn-sm">
-                        <i class="material-icons align-middle">edit</i>
-                        <span class="align-middle">글수정</span>
-                    </button>
-                    <button type="button" class="btn btn-info btn-sm ml-3">
-                        <i class="material-icons align-middle">delete</i>
-                        <span class="align-middle">글삭제</span>
-                    </button>
-                    <button type="button" class="btn btn-info btn-sm ml-3">
-                        <i class="material-icons align-middle">reply</i>
-                        <span class="align-middle">답글쓰기</span>
-                    </button>
-                    <button type="button" class="btn btn-info btn-sm ml-3" onclick="location.href = '/board/boardList.jsp';">
+<%--                    로그인--%>
+                    <c:if test="${ not empty sessionScope.id }">
+                    <%--로그인 아이디와 글작성자 아이디가 같을 때--%>
+                        <c:if test="${ sessionScope.id eq board.mid }">
+                            <button type="button" class="btn btn-info btn-sm">
+                                <i class="material-icons align-middle">edit</i>
+                                <span class="align-middle">글수정</span>
+                            </button>
+                            <button type="button" class="btn btn-info btn-sm ml-3">
+                                <i class="material-icons align-middle">delete</i>
+                                <span class="align-middle">글삭제</span>
+                            </button>
+                        </c:if>
+                        <button type="button" class="btn btn-info btn-sm ml-3">
+                            <i class="material-icons align-middle">reply</i>
+                            <span class="align-middle">답글쓰기</span>
+                        </button>
+                    </c:if>
+                    <button type="button" class="btn btn-info btn-sm ml-3" onclick="location.href = '/board/list?pageNum=${ pageNum }'">
                         <i class="material-icons align-middle">list</i>
                         <span class="align-middle">글목록</span>
                     </button>
@@ -268,10 +272,10 @@
 
 
 <%--    include bottomFooter.jsp--%>
-<jsp:include page="/include/bottomFooter.jsp"/>
+<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp"/>
 
 <%--    include javascript.js--%>
-<jsp:include page="/include/javascript.jsp"/>
+<jsp:include page="/WEB-INF/views/include/javascript.jsp"/>
 
 </body>
 </html>

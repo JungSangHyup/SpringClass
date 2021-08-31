@@ -40,6 +40,19 @@
 	<![CDATA[
         SELECT *
         FROM board
+    ]]>
+		<where>
+			<if test="type == 'T'">
+				subject LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'C'">
+				content LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'W'">
+				mid LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+		</where>
+		<![CDATA[
         ORDER BY re_ref DESC
             LIMIT #{startRow}, #{amount}
         ]]>
@@ -52,6 +65,24 @@
         FROM board
         ]]>
 	</select>
+
+
+	<select id="getBoard" resultType="boardVO">
+	<![CDATA[
+		SELECT *
+		FROM board
+		WHERE num = #{num}
+		]]>
+	</select>
+
+
+	<update id="updateReadcount">
+		<![CDATA[
+		UPDATE board
+		SET readcount = readcount + 1
+		WHERE num = #{num}
+		]]>
+	</update>
 
 
 

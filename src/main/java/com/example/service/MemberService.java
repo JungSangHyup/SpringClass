@@ -43,4 +43,6 @@ public class MemberService {
     public void updateMember(MemberVO memberVO){
         memberMapper.updateMember(memberVO);
     }
+
+
 }

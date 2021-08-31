@@ -54,7 +54,7 @@
     <div class="text-center text-secondary">
         <a href="#!">아이디 찾기</a>
         | <a href="#!">비밀번호 찾기</a>
-        | <a href="/member/join.jsp">회원가입</a>
+        | <a href="/member/join">회원가입</a>
     </div>
 
     <p class="mt-5 mb-3 text-muted">&copy; 2017-2021</p>

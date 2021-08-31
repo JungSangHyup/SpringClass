@@ -20,6 +20,9 @@ public interface BoardMapper {
 
     int getTotalCount();  // 전체 글개수 가져오기
 
+    BoardVO getBoard(int num);
+    
+    void updateReadcount(int num); // 조회수 증가시키기
 }
 
 

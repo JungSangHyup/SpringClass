@@ -1,21 +1,14 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jsh1703
-  Date: 2021-08-23
-  Time: 오후 2:22
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <%-- include head.jsp --%>
-    <jsp:include page="/WEB-INF/views/include/head.jsp"/>
+    <jsp:include page="/WEB-INF/views/include/head.jsp" />
 </head>
 <body>
-    <%-- include topNavbar.jsp --%>
-    <jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
-
+<%-- include topNavbar.jsp --%>
+<jsp:include page="/WEB-INF/views/include/topNavbar.jsp" />
 
 
 <!-- middle container -->
@@ -119,13 +112,13 @@
 
                     <div class="text-center">
                         <label class="mr-3">이벤트 등 알림 메일 수신동의 : </label>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="recvEmail" id="recvEmailYes" value="Y" checked>
-                            <label class="form-check-label" for="recvEmailYes">동의함</label>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadioInline1" name="recvEmail" class="custom-control-input" value="Y" checked>
+                            <label class="custom-control-label" for="customRadioInline1">동의함</label>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="recvEmail" id="recvEmailNo" value="N">
-                            <label class="form-check-label" for="recvEmailNo">동의 안함</label>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="customRadioInline2" name="recvEmail" class="custom-control-input" value="N">
+                            <label class="custom-control-label" for="customRadioInline2">동의 안함</label>
                         </div>
                     </div>
 
@@ -145,12 +138,12 @@
 
 
 
-<%--    include bottomFooter.jsp--%>
-<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp"/>
+<%-- include bottomFooter.jsp --%>
+<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp" />
 
 
-<%--    include javascript.js--%>
-<jsp:include page="/WEB-INF/views/include/javascript.jsp"/>
+<%-- include javascripts.jsp --%>
+<jsp:include page="/WEB-INF/views/include/javascript.jsp" />
 
 </body>
 </html>
