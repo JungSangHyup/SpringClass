@@ -70,10 +70,19 @@
                         <textarea class="form-control" id="content" rows="10" name="content"></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label for="exampleFormControlFile1">첨부 파일</label>
-                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+
+                    <button type="button" class="btn btn-primary" id="btnAddFile">파일 추가</button>
+
+                    <div><span>첨부 파일</span></div>
+                    <div id="fileBox">
+                        <div class="my-2">
+                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                            <button type="button" class="btn btn-primary btn-sm">
+                                <i class="material-icons-outlined">삭제</i>
+                            </button>
+                        </div>
                     </div>
+
 
                     <div class="my-4 text-center">
                         <button type="submit" class="btn btn-primary">
@@ -100,12 +109,24 @@
 
 
 
-<%--    include bottomFooter.jsp--%>
-<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp"/>
+    <%--    include bottomFooter.jsp--%>
+    <jsp:include page="/WEB-INF/views/include/bottomFooter.jsp"/>
 
-<%--    include javascript.js--%>
-<jsp:include page="/WEB-INF/views/include/javascript.jsp"/>
-
+    <%--    include javascript.js--%>
+    <jsp:include page="/WEB-INF/views/include/javascripts.jsp"/>
+    <script>
+        document.querySelector('#btnAddFile').addEventListener('click',
+            (event) => {
+                document.querySelector('#fileBox').innerHTML += `
+                    <div class="my-2">
+                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <i class="material-icons-outlined">삭제</i>
+                        </button>
+                    </div>
+                `;
+            });
+    </script>
 </body>
 </html>
 

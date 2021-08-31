@@ -143,7 +143,7 @@
 
 
 <%-- include javascripts.jsp --%>
-<jsp:include page="/WEB-INF/views/include/javascript.jsp" />
+<jsp:include page="/WEB-INF/views/include/javascripts.jsp" />
 
 </body>
 </html>

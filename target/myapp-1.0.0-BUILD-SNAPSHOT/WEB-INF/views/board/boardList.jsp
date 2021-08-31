@@ -109,19 +109,19 @@
 
                         <%-- 이전 --%>
                         <li class="page-item ${ (pageMaker.prev) ? '' : 'disabled' }">
-                            <a class="page-link" href="${ (pageMaker.prev) ? '/board/list?pageNum=' += (pageMaker.startPage - 1) += '&type' += pageMaker.cri.type += '&keyword' += pageMaker.cri.keyword: '' }#board">이전</a>
+                            <a class="page-link" href="${ (pageMaker.prev) ? '/board/list?pageNum=' += (pageMaker.startPage - 1) += '&type' += pageMaker.cri.type += '&keyword' += pageMaker.cri.keyword: '' }?#board">이전</a>
                         </li>
 
                         <%-- 시작페이지 번호 ~ 끝페이지 번호 --%>
                         <c:forEach var="i" begin="${ pageMaker.startPage }" end="${ pageMaker.endPage }" step="1">
                             <li class="page-item ${ (pageMaker.cri.pageNum eq i) ? 'active' : '' }">
-                                <a class="page-link" href="/board/list?pageNum=${ i }&type=${pageMaker.cri.type}&keyword=${pageMaker.cri.keyword}#board">${ i }</a>
+                                <a class="page-link" href="/board/list?pageNum=${ i }&type=${pageMaker.cri.type}&keyword=${pageMaker.cri.keyword}?#board">${ i }</a>
                             </li>
                         </c:forEach>
 
                         <%-- 다음 --%>
                         <li class="page-item ${ (pageMaker.next) ? '' : 'disabled' }">
-                            <a class="page-link" href="${ (pageMaker.next) ? '/board/list?pageNum=' += (pageMaker.endPage + 1) += '&type' += pageMaker.cri.type += '&keyword' += pageMaker.cri.keyword: '' }#board">다음</a>
+                            <a class="page-link" href="${ (pageMaker.next) ? '/board/list?pageNum=' += (pageMaker.endPage + 1) += '&type' += pageMaker.cri.type += '&keyword' += pageMaker.cri.keyword: '' }?#board">다음</a>
                         </li>
 
                     </ul>
@@ -167,7 +167,7 @@
 
 
 <%-- include javascripts.jsp --%>
-<jsp:include page="/WEB-INF/views/include/javascript.jsp" />
+<jsp:include page="/WEB-INF/views/include/javascripts.jsp" />
 
 </body>
 </html>
