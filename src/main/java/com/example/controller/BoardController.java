@@ -1,9 +1,15 @@
 package com.example.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import com.example.mapper.BoardMapper;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,10 +23,30 @@ import com.example.domain.BoardVO;
 import com.example.domain.Criteria;
 import com.example.domain.PageDTO;
 import com.example.service.BoardService;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/board/*")
 public class BoardController {
+
+    private String getFolder(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String str = sdf.format(new Date());
+        return str;
+    }
+
+    private boolean checkImageType(File file) throws IOException {
+        boolean isImage = false;
+
+        String contentType = Files.probeContentType(file.toPath());
+        // 이미지면 image/ 로 시작됨
+
+        isImage = contentType.startsWith("image");
+
+        return isImage;
+    }
 
     @Autowired
     private BoardService boardService;
@@ -62,22 +88,50 @@ public class BoardController {
     }
 
     @PostMapping("write")
-    public String write(String id, String subject, String content){
-        BoardVO boardVO = new BoardVO();
+    public String write(List<MultipartFile> files, BoardVO boardVO, HttpServletRequest request) throws IOException {
+
+        System.out.println("file 매게변수 값 : " + files);
+        if(files != null){
+            System.out.println("업로드한 첨부파일 개수 : " + files.size());
+        }
+
+        String uploadFoledr = "C:/upload";
+        File uploadPath = new File(uploadFoledr, getFolder());
+        System.out.println("uploadPath : " + uploadPath.getPath());
+
+        if(!uploadPath.exists()){
+            uploadPath.mkdirs();
+        }
+
+        for(MultipartFile file: files){
+            // 파일이 비어있는지 검사
+            if(!file.isEmpty()){
+                String originalFilename = file.getOriginalFilename();
+                UUID uuid = UUID.randomUUID();
+                String uploadFilename = uuid.toString() + "_" + originalFilename;
+
+                File uploadFile = new File(uploadPath, uploadFilename);
+                file.transferTo(uploadFile);
+
+                //현재 파일이 이미지 파일이면 썸네일 이미지 추가 생성
+                boolean isImage = checkImageType(uploadFile);
+                if(isImage){
+                    File outFile = new File(uploadPath, "s_" + uploadFilename);
+                    Thumbnailator.createThumbnail(uploadFile, outFile, 100, 100);
+                }
+            }
+        }
 
         int num = boardService.nextNum();
         boardVO.setNum(num);
-        boardVO.setMid(id);
-        boardVO.setSubject(subject);
-        boardVO.setContent(content);
         boardVO.setReadcount(0);//조회수 0~199 임의의 값
         boardVO.setRegDate(new Date());
-        boardVO.setIpaddr("127.0.0.1");//그냥 아이피 주소 설정
+        boardVO.setIpaddr(request.getRemoteAddr());//그냥 아이피 주소 설정
         boardVO.setReRef(num);
         boardVO.setReLev(0);
         boardVO.setReSeq(0);
 
         boardService.register(boardVO);
-        return "board/boardList";
+        return "redirect:/board/list";
     }
 }

@@ -75,12 +75,6 @@
 
                     <div><span>첨부 파일</span></div>
                     <div id="fileBox">
-                        <div class="my-2">
-                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
-                            <button type="button" class="btn btn-primary btn-sm delete-file">
-                                <i class="material-icons-outlined">삭제</i>
-                            </button>
-                        </div>
                     </div>
 
 
@@ -115,17 +109,38 @@
     <%--    include javascript.js--%>
     <jsp:include page="/WEB-INF/views/include/javascripts.jsp"/>
     <script>
+        const MAX_FILE_COUNT = 5;
+        let fileCount = 0;
+
+
         document.querySelector('#btnAddFile').addEventListener('click',
-            (event) => {
+            () => {
+                if(fileCount >= MAX_FILE_COUNT){
+                    alert('첨부 파일은 최대 5개 까지만 가능합니다.')
+                    return;
+                }
+
                 document.querySelector('#fileBox').innerHTML += `
                     <div class="my-2">
-                        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        <input type="file" class="form-control-file" id="exampleFormControlFile1" name="files">
                         <button type="button" class="btn btn-primary btn-sm delete-file">
                             <i class="material-icons-outlined">삭제</i>
                         </button>
                     </div>
                 `;
-            });
+
+                document.querySelectorAll('.delete-file').forEach(
+                    (e) => {
+                        e.addEventListener('click',
+                            () => {
+                                e.parentElement.remove();
+                                e.remove();
+                                fileCount--;
+                            })
+                    }
+                )
+                fileCount++;
+            })
     </script>
 </body>
 </html>
