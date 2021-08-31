@@ -20,10 +20,18 @@ public interface BoardMapper {
 
     int getTotalCount();  // 전체 글개수 가져오기
 
-    BoardVO getBoard(int num);
-    
-    void updateReadcount(int num); // 조회수 증가시키기
+    int getTotalCountBySearch(Criteria cri);  // 검색을 적용하여 전체 글개수 가져오기
+
+
+    BoardVO getBoard(int num); // 글번호에 해당하는 글 한개 가져오기
+
+
+    void updateReadcount(int num); // 글번호에 해당하는 글의 조회수를 1 증가시키기
+
 }
+
+
+
 
 
 

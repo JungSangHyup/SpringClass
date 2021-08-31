@@ -1,69 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.mapper.BoardMapper">
 
-    <insert id="insert">
+	<insert id="insert">
 	<![CDATA[
-        INSERT INTO board (num, mid, subject, content, readcount, reg_date, ipaddr, re_ref, re_lev, re_seq)
-        VALUES (#{num}, #{mid}, #{subject}, #{content}, #{readcount}, #{regDate}, #{ipaddr}, #{reRef}, #{reLev}, #{reSeq})
-        ]]>
+		INSERT INTO board (num, mid, subject, content, readcount, reg_date, ipaddr, re_ref, re_lev, re_seq)
+		VALUES (#{num}, #{mid}, #{subject}, #{content}, #{readcount}, #{regDate}, #{ipaddr}, #{reRef}, #{reLev}, #{reSeq})
+		]]>
 	</insert>
 
 
-    <select id="nextNum" resultType="int">
+	<select id="nextNum" resultType="int">
 	<![CDATA[
-        SELECT IFNULL(MAX(num), 0) + 1 AS bnum
-        FROM board
-        ]]>
+		SELECT IFNULL(MAX(num), 0) + 1 AS bnum
+		FROM board
+		]]>
 	</select>
 
 
-    <delete id="deleteAll">
+	<delete id="deleteAll">
 	<![CDATA[
-        DELETE FROM board
-        ]]>
+		DELETE FROM board
+		]]>
 	</delete>
 
 
-    <select id="getBoards" resultType="boardVO">
+	<select id="getBoards" resultType="boardVO">
 	<![CDATA[
-        SELECT *
-        FROM board
-        ORDER BY re_ref DESC
-        ]]>
+		SELECT *
+		FROM board
+		ORDER BY re_ref DESC
+		]]>
 	</select>
 
 
-    <select id="getBoardsWithPaging" resultType="boardVO">
-	<![CDATA[
-        SELECT *
-        FROM board
-    ]]>
+	<select id="getBoardsWithPaging" resultType="boardVO">
+		<![CDATA[
+		SELECT *
+		FROM board
+	]]>
 		<where>
-			<if test="type == 'T'">
+			<if test="type == 'T'.toString()">
 				subject LIKE CONCAT('%', #{keyword}, '%')
 			</if>
-			<if test="type == 'C'">
+			<if test="type == 'C'.toString()">
 				content LIKE CONCAT('%', #{keyword}, '%')
 			</if>
-			<if test="type == 'W'">
+			<if test="type == 'W'.toString()">
 				mid LIKE CONCAT('%', #{keyword}, '%')
 			</if>
 		</where>
 		<![CDATA[
-        ORDER BY re_ref DESC
-            LIMIT #{startRow}, #{amount}
-        ]]>
+		ORDER BY re_ref DESC
+		LIMIT #{startRow}, #{amount}
+	]]>
 	</select>
 
 
-    <select id="getTotalCount" resultType="int">
+	<select id="getTotalCount" resultType="int">
 	<![CDATA[
-        SELECT COUNT(*)
-        FROM board
-        ]]>
+		SELECT COUNT(*)
+		FROM board
+		]]>
+	</select>
+
+
+	<select id="getTotalCountBySearch" resultType="int">
+		<![CDATA[
+		SELECT COUNT(*)
+		FROM board
+	]]>
+		<where>
+			<if test="type == 'T'.toString()">
+				subject LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'C'.toString()">
+				content LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+			<if test="type == 'W'.toString()">
+				mid LIKE CONCAT('%', #{keyword}, '%')
+			</if>
+		</where>
 	</select>
 
 
@@ -77,12 +96,13 @@
 
 
 	<update id="updateReadcount">
-		<![CDATA[
+	<![CDATA[
 		UPDATE board
 		SET readcount = readcount + 1
 		WHERE num = #{num}
 		]]>
 	</update>
+
 
 
 

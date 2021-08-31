@@ -109,19 +109,19 @@
 
                         <%-- 이전 --%>
                         <li class="page-item ${ (pageMaker.prev) ? '' : 'disabled' }">
-                            <a class="page-link" href="${ (pageMaker.prev) ? '/board/list?pageNum=' += (pageMaker.startPage - 1) : '' }#board">이전</a>
+                            <a class="page-link" href="${ (pageMaker.prev) ? '/board/list?pageNum=' += (pageMaker.startPage - 1) += '&type' += pageMaker.cri.type += '&keyword' += pageMaker.cri.keyword: '' }#board">이전</a>
                         </li>
 
                         <%-- 시작페이지 번호 ~ 끝페이지 번호 --%>
                         <c:forEach var="i" begin="${ pageMaker.startPage }" end="${ pageMaker.endPage }" step="1">
                             <li class="page-item ${ (pageMaker.cri.pageNum eq i) ? 'active' : '' }">
-                                <a class="page-link" href="/board/list?pageNum=${ i }#board">${ i }</a>
+                                <a class="page-link" href="/board/list?pageNum=${ i }&type=${pageMaker.cri.type}&keyword=${pageMaker.cri.keyword}#board">${ i }</a>
                             </li>
                         </c:forEach>
 
                         <%-- 다음 --%>
                         <li class="page-item ${ (pageMaker.next) ? '' : 'disabled' }">
-                            <a class="page-link" href="${ (pageMaker.next) ? '/board/list?pageNum=' += (pageMaker.endPage + 1) : '' }#board">다음</a>
+                            <a class="page-link" href="${ (pageMaker.next) ? '/board/list?pageNum=' += (pageMaker.endPage + 1) += '&type' += pageMaker.cri.type += '&keyword' += pageMaker.cri.keyword: '' }#board">다음</a>
                         </li>
 
                     </ul>
@@ -137,15 +137,14 @@
                     <div class="form-group mx-3">
                         <label for="searchType">검색 조건</label>
                         <select class="form-control mx-2" id="searchType" name="type">
-                            <option value="" disabled selected>--</option>
-                            <option value="T">제목</option>
-                            <option value="C">내용</option>
-                            <option value="W">작성자</option>
+                            <option value="T" ${(pageMaker.cri.type eq 'T') ? 'selected': ''}>제목</option>
+                            <option value="C" ${(pageMaker.cri.type eq 'C') ? 'selected': ''}>내용</option>
+                            <option value="W" ${(pageMaker.cri.type eq 'W') ? 'selected': ''}>작성자</option>
                         </select>
                     </div>
 
                     <label for="searchKeyword">검색어</label>
-                    <input type="text" class="form-control mb-2 mr-sm-2 mx-2" id="searchKeyword" placeholder="검색어" name="keyword">
+                    <input type="text" class="form-control mb-2 mr-sm-2 mx-2" id="searchKeyword" placeholder="검색어" name="keyword" value="${pageMaker.cri.keyword}">
 
                     <button type="submit" class="btn btn-primary mb-2">
                         <i class="material-icons align-middle">search</i>
