@@ -4,10 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import com.example.domain.AttachVO;
 import com.example.mapper.BoardMapper;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +105,10 @@ public class BoardController {
             uploadPath.mkdirs();
         }
 
+        List<AttachVO> attachList = new ArrayList<>();
+
+        int num = boardService.nextNum();
+
         for(MultipartFile file: files){
             // 파일이 비어있는지 검사
             if(!file.isEmpty()){
@@ -119,10 +125,18 @@ public class BoardController {
                     File outFile = new File(uploadPath, "s_" + uploadFilename);
                     Thumbnailator.createThumbnail(uploadFile, outFile, 100, 100);
                 }
+
+                AttachVO attachVO =  new AttachVO();
+                attachVO.setUuid(uuid.toString());
+                attachVO.setUploadpath(getFolder());
+                attachVO.setFilename(originalFilename);
+                attachVO.setFiletype((isImage) ? "I" : "O");
+                attachVO.setBno(num);
+
+                attachList.add(attachVO);
             }
         }
 
-        int num = boardService.nextNum();
         boardVO.setNum(num);
         boardVO.setReadcount(0);//조회수 0~199 임의의 값
         boardVO.setRegDate(new Date());
@@ -131,7 +145,9 @@ public class BoardController {
         boardVO.setReLev(0);
         boardVO.setReSeq(0);
 
-        boardService.register(boardVO);
+//        boardService.register(boardVO);
+        boardService.registerBoardAndAttaches(boardVO, attachList);
         return "redirect:/board/list";
+
     }
 }

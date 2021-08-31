@@ -2,12 +2,15 @@ package com.example.service;
 
 import java.util.List;
 
+import com.example.domain.AttachVO;
+import com.example.mapper.AttachMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.domain.BoardVO;
 import com.example.domain.Criteria;
 import com.example.mapper.BoardMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BoardService {
@@ -15,9 +18,18 @@ public class BoardService {
     @Autowired
     private BoardMapper boardMapper;
 
+    @Autowired
+    private AttachMapper attachMapper;
+
 
     public int register(BoardVO boardVO) {
         return boardMapper.insert(boardVO);
+    }
+
+    @Transactional
+    public void registerBoardAndAttaches(BoardVO boardVO, List<AttachVO> attachList) {
+        boardMapper.insert(boardVO);
+        attachMapper.insertAttaches(attachList);
     }
 
     public int nextNum() {
