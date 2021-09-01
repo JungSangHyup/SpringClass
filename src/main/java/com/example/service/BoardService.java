@@ -1,6 +1,8 @@
 package com.example.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.domain.AttachVO;
 import com.example.mapper.AttachMapper;
@@ -42,6 +44,17 @@ public class BoardService {
 
     public List<BoardVO> getBoards() {
         return boardMapper.getBoards();
+    }
+
+    public Map<String, Object> getBoardAndAttaches(int num)
+    {
+        BoardVO boardVO = boardMapper.getBoard(num);
+        List<AttachVO> attachList = attachMapper.getAttachesByBoardBno(num);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("boardVO", boardVO);
+        map.put("attachList", attachList);
+        return map;
     }
 
     // 페이징으로 글 가져오기

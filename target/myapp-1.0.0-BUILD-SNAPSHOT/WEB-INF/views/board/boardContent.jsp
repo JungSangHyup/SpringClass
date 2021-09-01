@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -88,13 +89,35 @@
                     <tr>
                         <th scope="row" class="text-center">첨부파일</th>
                         <td colspan="5">
-                            <ul>
-                                <li>첨부파일1</li>
-                                <li>첨부파일2</li>
-                                <li>첨부파일3</li>
-                                <li>첨부파일4</li>
-                                <li>첨부파일5</li>
-                            </ul>
+                            <c:choose>
+                                <c:when test="${ attachList.size() > 0 }">
+                                    <ul>
+                                    <c:forEach var="attach" items="${ attachList }">
+                                        <c:if test="${attach.filetype eq 'O'}">
+                                            <li>
+                                                <c:set var="fileCallPath" value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }"/>
+                                                <a href="javascript:location.href =  '/download?fileName=' + encodeURIComponent('${ fileCallPath }')">
+                                                        ${ attach.filename }
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                        <c:if test="${ attach.filetype eq 'I' }">
+                                            <c:set var="fileCallPath" value="${ attach.uploadpath }/s_${ attach.uuid }_${ attach.filename }"/>
+                                            <c:set var="originPath" value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }"/>
+                                            <li>
+                                                <a href="/display?fileName=${ originPath }">
+                                                    <img src="/display?fileName=${ fileCallPath }">
+                                                        ${ attach.filename }
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                    </c:forEach>
+                                    </ul>
+                                </c:when>
+                                <c:otherwise>
+                                    <span>첨부파일 없음</span>
+                                </c:otherwise>
+                            </c:choose>
                         </td>
                     </tr>
                 </table>

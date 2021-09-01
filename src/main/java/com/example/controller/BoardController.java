@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import com.example.domain.AttachVO;
 import com.example.mapper.BoardMapper;
@@ -26,6 +23,7 @@ import com.example.domain.Criteria;
 import com.example.domain.PageDTO;
 import com.example.service.BoardService;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -77,9 +75,12 @@ public class BoardController {
         boardService.updateReadcount(num);
 
         // 글 한 개 가져오기
-        BoardVO boardVO = boardService.getBoard(num);
+        Map<String, Object> map = boardService.getBoardAndAttaches(num);
+        BoardVO boardVO = (BoardVO) map.get("boardVO");
+        List<AttachVO> attachList = (List<AttachVO>) map.get("attachList");
 
         model.addAttribute("board", boardVO);
+        model.addAttribute("attachList", attachList);
 
         return "board/boardContent";// JSP 이름
     }
@@ -90,9 +91,8 @@ public class BoardController {
     }
 
     @PostMapping("write")
-    public String write(List<MultipartFile> files, BoardVO boardVO, HttpServletRequest request) throws IOException {
+    public String write(List<MultipartFile> files, BoardVO boardVO, HttpServletRequest request, RedirectAttributes rttr) throws IOException {
 
-        System.out.println("file 매게변수 값 : " + files);
         if(files != null){
             System.out.println("업로드한 첨부파일 개수 : " + files.size());
         }
@@ -145,9 +145,17 @@ public class BoardController {
         boardVO.setReLev(0);
         boardVO.setReSeq(0);
 
-//        boardService.register(boardVO);
-        boardService.registerBoardAndAttaches(boardVO, attachList);
-        return "redirect:/board/list";
+        if(files != null){
+            boardService.registerBoardAndAttaches(boardVO, attachList);
+        }else{
+            boardService.register(boardVO);
+        }
 
+
+        // 리다이렉트시 서버에 전달할 쿼리 스트링
+        rttr.addAttribute("num", boardVO.getNum());
+        rttr.addAttribute("pageNum", 1);
+
+        return "redirect:/board/content";
     }
 }
