@@ -4,52 +4,42 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import com.example.domain.AttachVO;
-import com.example.mapper.BoardMapper;
-import net.coobird.thumbnailator.Thumbnailator;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.example.domain.BoardVO;
-import com.example.domain.Criteria;
-import com.example.domain.PageDTO;
-import com.example.service.BoardService;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
+import com.example.domain.AttachVO;
+import com.example.domain.BoardVO;
+import com.example.domain.Criteria;
+import com.example.domain.PageDTO;
+import com.example.service.AttachService;
+import com.example.service.BoardService;
+
+import net.coobird.thumbnailator.Thumbnailator;
 
 @Controller
 @RequestMapping("/board/*")
 public class BoardController {
 
-    private String getFolder(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
-        String str = sdf.format(new Date());
-        return str;
-    }
-
-    private boolean checkImageType(File file) throws IOException {
-        boolean isImage = false;
-
-        String contentType = Files.probeContentType(file.toPath());
-        // 이미지면 image/ 로 시작됨
-
-        isImage = contentType.startsWith("image");
-
-        return isImage;
-    }
-
     @Autowired
     private BoardService boardService;
+    @Autowired
+    private AttachService attachService;
 
 
     @GetMapping("/list")
@@ -58,7 +48,8 @@ public class BoardController {
 
         List<BoardVO> boardList = boardService.getBoards(cri);
 
-        int totalCount = boardService.getTotalCount(); // 전체 글개수
+        //int totalCount = boardService.getTotalCount(); // 전체 글개수
+        int totalCount = boardService.getTotalCountBySearch(cri); // 검색이 적용된 전체 글개수
 
         PageDTO pageDTO = new PageDTO(totalCount, cri); // 페이지블록(Pagination) 화면 만들때 필요한 정보
 
@@ -69,93 +60,266 @@ public class BoardController {
         return "board/boardList";
     }
 
+
     @GetMapping("/content")
-    public String content(int num, @ModelAttribute("pageNum") String pageNum, Model model){
+    public String content(int num, @ModelAttribute("pageNum") String pageNum, Model model) {
+
         // 조회수 1 증가시키기
         boardService.updateReadcount(num);
 
-        // 글 한 개 가져오기
+        // 글 한개 가져오기
+        //BoardVO boardVO = boardService.getBoard(num);
+        // 게시글 한개와 게시글에 첨부된 첨부파일정보 여러개 가져오기
         Map<String, Object> map = boardService.getBoardAndAttaches(num);
+        BoardVO boardVO = (BoardVO) map.get("boardVO");
+        List<AttachVO> attachList = (List<AttachVO>) map.get("attachList");
+
+        model.addAttribute("boardVO", boardVO);
+        model.addAttribute("attachList", attachList);
+        model.addAttribute("attachCount", attachList.size());
+        //model.addAttribute("pageNum", pageNum);
+
+        return "board/boardContent";
+    } // content
+
+
+    // 새로운 주글쓰기 폼 화면 요청
+    @GetMapping("/write")
+    public String write(@ModelAttribute("pageNum") String pageNum) {
+        // 사용자 로그인 권한 확인
+//		if (session.getAttribute("id") == null) { // 로그인 안한 사용자면
+//			return "redirect:/member/login";
+//		}
+
+        return "board/boardWrite";
+    } // get write
+
+
+
+    // 년/월/일 형식의 폴더명 리턴하는 메소드
+    private String getFolder() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        String str = sdf.format(new Date());
+        return str;
+    }
+
+
+    // 이미지 파일인지 여부 리턴하는 메소드
+    private boolean checkImageType(File file) throws IOException {
+        boolean isImage = false;
+
+        String contentType = Files.probeContentType(file.toPath()); // "image/jpg"
+        System.out.println("contentType : " + contentType);
+
+        isImage = contentType.startsWith("image");
+        return isImage;
+    }
+
+
+
+    // 첨부파일 업로드(썸네일 생성) 후 attacList 리턴하는 메소드
+    private List<AttachVO> uploadFilesAndGetAttachList(List<MultipartFile> files, int bno) throws IllegalStateException, IOException {
+
+        List<AttachVO> attachList = new ArrayList<AttachVO>();
+
+        if (files != null) {
+            System.out.println("업로드한 첨부파일 개수 : " + files.size());
+        }
+
+        String uploadFolder = "C:/upload";  // 업로드 기준경로
+
+        File uploadPath = new File(uploadFolder, getFolder()); // C:/ksw/upload/2021/08/31
+        System.out.println("uploadPath : " + uploadPath.getPath());
+
+        if (uploadPath.exists() == false) {  // !uploadPath.exists()
+            uploadPath.mkdirs();
+        }
+
+        for (MultipartFile multipartFile : files) {
+            // 업로드 시 file type의 input 태그가 총 5개 사용되었는데
+            // 그중에 3개만 파일을 선택하고 2개는 파일선택안하고 비워두면
+            // files.size()는 5가 되므로, 실제 선택한 파일정보만 가져오려면  isEmpty()로 걸러야됨
+            if (multipartFile.isEmpty()) {
+                continue;
+            }
+
+            String originalFilename = multipartFile.getOriginalFilename();
+            UUID uuid = UUID.randomUUID();
+            String uploadFilename = uuid.toString() + "_" + originalFilename;
+
+            File file = new File(uploadPath, uploadFilename); // 생성할 파일이름 정보
+
+            // 파일1개 업로드(파일 생성) 완료
+            multipartFile.transferTo(file);
+            // ======================================================
+
+            // 현재 업로드한 파일이 이미지 파일이면 썸네일 이미지를 추가로 생성하기
+            boolean isImage = checkImageType(file); // 이미지 파일여부 확인
+
+            if (isImage == true) {
+                File outFile = new File(uploadPath, "s_" + uploadFilename);
+
+                Thumbnailator.createThumbnail(file, outFile, 100, 100);  // 썸네일 이미지 파일 생성하기
+            }
+
+
+            //===== insert할 AttachVO 객체 데이터 생성 ======
+            AttachVO attachVO = new AttachVO();
+            attachVO.setUuid(uuid.toString());
+            attachVO.setUploadpath(getFolder());
+            attachVO.setFilename(originalFilename);
+            attachVO.setFiletype( (isImage == true) ? "I" : "O" );
+            attachVO.setBno(bno);
+
+            attachList.add(attachVO); // 리스트에 추가
+        } // for
+
+        return attachList;
+    } // uploadFilesAndGetAttachList
+
+
+
+    // 첨부파일 업로드와 함께 주글쓰기 처리
+    @PostMapping("/write")
+    public String write(List<MultipartFile> files, BoardVO boardVO,
+                        HttpServletRequest request, RedirectAttributes rttr) throws IOException {
+
+        // insert할 새 글번호 가져오기
+        int num = boardService.nextNum();
+
+        // 첨부파일 업로드(썸네일 생성) 후 attacList 리턴
+        List<AttachVO> attachList = uploadFilesAndGetAttachList(files, num);
+
+
+        // ===== insert할 BoardVO 객체 데이터 설정 ======
+        boardVO.setNum(num);
+        boardVO.setReadcount(0);
+        boardVO.setRegDate(new Date());
+        boardVO.setIpaddr(request.getRemoteAddr()); // 사용자 IP 주소 저장
+        boardVO.setReRef(num);  // 주글일 경우 글그룹번호는 글번호와 동일함
+        boardVO.setReLev(0);    // 주글일 경우 들여쓰기 레벨은 0
+        boardVO.setReSeq(0);    // 주글일 경우 글그룹 안에서의 순번은 0
+
+        //boardService.register(boardVO);
+        boardService.registerBoardAndAttaches(boardVO, attachList); // 주글 한개와 첨부파일 여러개 등록 - 트랜잭션 처리
+        //===============================================
+
+        // 리다이렉트시 서버에 전달할 데이터를 저장하면 스프링이 자동으로 쿼리스트링으로 변환하여 처리해줌
+        rttr.addAttribute("num", boardVO.getNum());
+        rttr.addAttribute("pageNum", 1);
+
+        return "redirect:/board/content";
+    } // post write
+
+
+
+    private void deleteAttachFiles(List<AttachVO> attachList) {
+
+        String basePath = "C:/upload";
+
+        for (AttachVO attachVO : attachList) {
+            String uploadpath = basePath + "/" + attachVO.getUploadpath();
+            String filename = attachVO.getUuid() + "_" + attachVO.getFilename();
+
+            File file = new File(uploadpath, filename);
+
+            if (file.exists() == true) { // 해당 경로에 첨부파일이 존재하면
+                file.delete(); // 첨부파일 삭제하기
+            }
+
+            // 첨부파일이 이미지 파일이면 썸네일 이미지파일도 삭제하기
+            if (attachVO.getFiletype().equals("I")) { // "Image" 타입이면
+                // 섬네일 이미지 존재여부 확인 후 삭제하기
+                File thumbnailFile = new File(uploadpath, "s_" + filename);
+                if (thumbnailFile.exists() == true) {
+                    thumbnailFile.delete();
+                }
+            }
+        } // for
+    } // deleteAttachFiles
+
+
+    @GetMapping("/remove")
+    public String remove(int num, String pageNum) {
+
+        // ================== 첨부파일 삭제 ==================
+
+        List<AttachVO> attachList = attachService.getAttachesByBno(num);
+
+        deleteAttachFiles(attachList); // 첨부파일(썸네일도 삭제) 삭제하기
+
+        System.out.println("================ 첨부파일 삭제 완료 ================");
+
+
+        // attach 와 board 테이블 내용 삭제 - 트랜잭션 단위로 처리 적용
+        boardService.deleteBoardAndAttaches(num);
+
+        // 글목록으로 리다이렉트 이동
+        return "redirect:/board/list?pageNum=" + pageNum;
+    } // remove
+
+
+
+    @GetMapping("/board/modify")
+    public String modifyForm(int num, @ModelAttribute("pageNum") String pageNum, Model model) {
+
+        Map<String, Object> map = boardService.getBoardAndAttaches(num);
+
         BoardVO boardVO = (BoardVO) map.get("boardVO");
         List<AttachVO> attachList = (List<AttachVO>) map.get("attachList");
 
         model.addAttribute("board", boardVO);
         model.addAttribute("attachList", attachList);
+        //model.addAttribute("pageNum", pageNum); // @ModelAttribute 애노테이션으로 처리함과 동일
 
-        return "board/boardContent";// JSP 이름
-    }
+        return "board/boardModify";
+    } // modifyForm
 
-    @GetMapping("write")
-    public String write(@ModelAttribute("pageNum") String pageNum){
-        return "board/boardWrite";
-    }
 
-    @PostMapping("write")
-    public String write(List<MultipartFile> files, BoardVO boardVO, HttpServletRequest request, RedirectAttributes rttr) throws IOException {
+    @PostMapping("/modify")
+    public String modify(List<MultipartFile> files, BoardVO boardVO, String pageNum,
+                         @RequestParam(name = "delfile", required = false) List<String> delUuidList,
+                         HttpServletRequest request, RedirectAttributes rttr) throws IllegalStateException, IOException {
 
-        if(files != null){
-            System.out.println("업로드한 첨부파일 개수 : " + files.size());
-        }
+        // 1) 신규 첨부파일 업로드하기. 신규파일정보 신규리스트에 추가.
+        List<AttachVO> newAttachList = uploadFilesAndGetAttachList(files, boardVO.getNum());
+        System.out.println("================ 첨부파일 업로드 완료 ================");
 
-        String uploadFoledr = "C:/upload";
-        File uploadPath = new File(uploadFoledr, getFolder());
-        System.out.println("uploadPath : " + uploadPath.getPath());
 
-        if(!uploadPath.exists()){
-            uploadPath.mkdirs();
-        }
+        // 2) 삭제할 첨부파일 삭제하기(썸네일 이미지도 삭제). 삭제파일정보 삭제리스트에 추가
+        // ================== 첨부파일 삭제 ==================
+        // 삭제할 첨부파일정보 리스트 가져오기
+        List<AttachVO> delAttachList = attachService.getAttachesByUuids(delUuidList);
 
-        List<AttachVO> attachList = new ArrayList<>();
+        deleteAttachFiles(delAttachList); // 첨부파일(썸네일도 삭제) 삭제하기
 
-        int num = boardService.nextNum();
+        System.out.println("================ 첨부파일 삭제 완료 ================");
 
-        for(MultipartFile file: files){
-            // 파일이 비어있는지 검사
-            if(!file.isEmpty()){
-                String originalFilename = file.getOriginalFilename();
-                UUID uuid = UUID.randomUUID();
-                String uploadFilename = uuid.toString() + "_" + originalFilename;
 
-                File uploadFile = new File(uploadPath, uploadFilename);
-                file.transferTo(uploadFile);
+        // 3) boardVO 준비해서  첨부파일 신규리스트, 삭제리스트와 함께
+        //    테이블 글 수정(update)을 트랜잭션 단위로 처리
 
-                //현재 파일이 이미지 파일이면 썸네일 이미지 추가 생성
-                boolean isImage = checkImageType(uploadFile);
-                if(isImage){
-                    File outFile = new File(uploadPath, "s_" + uploadFilename);
-                    Thumbnailator.createThumbnail(uploadFile, outFile, 100, 100);
-                }
-
-                AttachVO attachVO =  new AttachVO();
-                attachVO.setUuid(uuid.toString());
-                attachVO.setUploadpath(getFolder());
-                attachVO.setFilename(originalFilename);
-                attachVO.setFiletype((isImage) ? "I" : "O");
-                attachVO.setBno(num);
-
-                attachList.add(attachVO);
-            }
-        }
-
-        boardVO.setNum(num);
-        boardVO.setReadcount(0);//조회수 0~199 임의의 값
         boardVO.setRegDate(new Date());
-        boardVO.setIpaddr(request.getRemoteAddr());//그냥 아이피 주소 설정
-        boardVO.setReRef(num);
-        boardVO.setReLev(0);
-        boardVO.setReSeq(0);
+        boardVO.setIpaddr(request.getRemoteAddr()); // 사용자 IP 주소 저장
 
-        if(files != null){
-            boardService.registerBoardAndAttaches(boardVO, attachList);
-        }else{
-            boardService.register(boardVO);
-        }
+        boardService.updateBoardAndInsterAttachesAndDeleteAttaches(boardVO, newAttachList, delUuidList);
+        System.out.println("================ 테이블 수정 완료 ================");
 
-
-        // 리다이렉트시 서버에 전달할 쿼리 스트링
         rttr.addAttribute("num", boardVO.getNum());
-        rttr.addAttribute("pageNum", 1);
+        rttr.addAttribute("pageNum", pageNum);
 
         return "redirect:/board/content";
-    }
+    } // modify
+
+
+
+
+
+
 }
+
+
+
+
+
+

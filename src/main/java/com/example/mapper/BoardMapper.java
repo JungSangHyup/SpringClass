@@ -14,6 +14,8 @@ public interface BoardMapper {
 
     int deleteAll(); // 전체 행 삭제
 
+    int deleteBoardByNum(int num); // 글 번호에 해당하는 글 한 개 삭제하기
+
     List<BoardVO> getBoards();  // 전체 게시글 내용 가져오기
 
     List<BoardVO> getBoardsWithPaging(Criteria cri);  // 페이징으로 게시글 내용 가져오기
@@ -28,6 +30,7 @@ public interface BoardMapper {
 
     void updateReadcount(int num); // 글번호에 해당하는 글의 조회수를 1 증가시키기
 
+    void updateBoard(BoardVO boardVO);
 }
 
 

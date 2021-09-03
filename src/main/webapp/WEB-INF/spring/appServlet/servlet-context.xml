@@ -29,7 +29,20 @@
             <mapping path="/**" />
             <beans:bean class="com.example.interceptor.RememberMeInterceptor" />
         </interceptor>
+        <interceptor>
+            <mapping path="/member/*"/>
+            <exclude-mapping path="/member/join"/>
+            <exclude-mapping path="/member/login"/>
+            <beans:ref bean="loginCheckInterceptor" />
+        </interceptor>
+        <interceptor>
+            <mapping path="/board/*"/>
+            <exclude-mapping path="/board/list"/>
+            <exclude-mapping path="/board/content"/>
+            <beans:ref bean="loginCheckInterceptor" />
+        </interceptor>
     </interceptors>
+    <beans:bean id="loginCheckInterceptor" class="com.example.interceptor.LoginCheckInterceptor"/>
 
 
 </beans:beans>

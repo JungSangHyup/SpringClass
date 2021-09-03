@@ -56,8 +56,8 @@
 
                 <form action="/board/write" method="POST" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="id">아이디</label>
-                        <input type="text" class="form-control" id="id" aria-describedby="idHelp" name="id" value='${id}' readonly>
+                        <label for="mid">아이디</label>
+                        <input type="text" class="form-control" id="mid" aria-describedby="idHelp" name="mid" value='${ sessionScope.id }' readonly>
                     </div>
 
                     <div class="form-group">

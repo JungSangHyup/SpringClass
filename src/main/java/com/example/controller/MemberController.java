@@ -1,14 +1,9 @@
 package com.example.controller;
 
-import java.util.Date;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.example.domain.MemberVO;
+import com.example.service.MemberService;
+import com.example.util.Script;
 import org.mindrot.jbcrypt.BCrypt;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,17 +12,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.domain.MemberVO;
-import com.example.mapper.MemberMapper;
-import com.example.service.MemberService;
-import com.example.util.Script;
-
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 @Controller // @Component 계열 애노테이션
 @RequestMapping("/member/*")
 public class MemberController {
 
     private MemberService memberService;
+
 
     // @Autowired 애노테이션이 생성자에서는 생략가능
     public MemberController(MemberService memberService) {
@@ -146,6 +142,10 @@ public class MemberController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
+        if(session.getAttribute("id") == null){
+            return "redirect:/member/login";
+        }
+
         // 로그아웃 처리하기
 
         // 세션 비우기

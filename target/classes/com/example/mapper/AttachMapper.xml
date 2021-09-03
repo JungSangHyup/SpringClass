@@ -5,30 +5,52 @@
 <mapper namespace="com.example.mapper.AttachMapper">
 
 	<insert id="insertAttach">
-		<![CDATA[
-		INSERT INTO Attach (uuid, uploadpath, filename, filetype, bno)
-		VALUES
-		       (#{uuid}, #{uploadpath}, #{filename}, #{filetype}, #{bno})
+	<![CDATA[
+		INSERT INTO attach (uuid, uploadpath, filename, filetype, bno)
+		VALUES (#{uuid}, #{uploadpath}, #{filename}, #{filetype}, #{bno})
 		]]>
 	</insert>
 
 
 	<insert id="insertAttaches">
 		<![CDATA[
-		INSERT INTO Attach (uuid, uploadpath, filename, filetype, bno)
+		INSERT INTO attach (uuid, uploadpath, filename, filetype, bno)
 		VALUES
-		]]>
+	]]>
 		<foreach collection="list" item="attach" separator=",">
 			(#{attach.uuid}, #{attach.uploadpath}, #{attach.filename}, #{attach.filetype}, #{attach.bno})
 		</foreach>
 	</insert>
 
-	<select id="getAttachesByBoardBno" resultType="attachVO">
+
+	<select id="getAttachesByBno" resultType="attachVO">
 		<![CDATA[
 		SELECT * FROM attach WHERE bno = #{bno}
 		]]>
 	</select>
 
+
+	<select id="getAttachesByUuids" resultType="attachVO">
+		<![CDATA[
+		SELECT *
+		FROM attach
+		WHERE uuid IN
+		]]>
+		<foreach collection="list" item="uuid" open="(" separator="," close=")">
+			#{uuid}
+		</foreach>
+	</select>
+
+	<delete id="deleteAttachesByUuids">
+		<![CDATA[
+		DELETE
+		FROM attach
+		WHERE uuid IN
+		]]>
+		<foreach collection="list" item="uuid" open="(" separator="," close=")">
+			#{uuid}
+		</foreach>
+	</delete>
 
 
 </mapper>

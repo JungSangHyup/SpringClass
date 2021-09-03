@@ -1,24 +1,24 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jsh1703
-  Date: 2021-08-23
-  Time: 오후 2:24
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <%-- include head.jsp --%>
-    <jsp:include page="/WEB-INF/views/include/head.jsp"/>
-    <title>BoardContent</title>
+    <jsp:include page="/WEB-INF/views/include/head.jsp" />
+
+    <style>
+        time.comment-date {
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body>
-    <%-- include topNavbar.jsp --%>
-    <jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
+<%-- include topNavbar.jsp --%>
+<jsp:include page="/WEB-INF/views/include/topNavbar.jsp" />
 
 
 
@@ -62,87 +62,93 @@
                 <table class="table table-striped">
                     <tr>
                         <th scope="row" class="text-center">제목</th>
-                        <td colspan="5">${ board.subject }</td>
+                        <td colspan="5">${ boardVO.subject }</td>
                     </tr>
                     <tr>
                         <th scope="row" class="text-center">작성자</th>
-                        <td>${ board.mid }</td>
+                        <td>${ boardVO.mid }</td>
                         <th scope="row" class="text-center">작성일</th>
-                        <td><fmt:formatDate value="${ board.regDate }" pattern="yyyy.MM.dd" /></td>
+                        <td><fmt:formatDate value="${ boardVO.regDate }" pattern="yyyy.MM.dd" /></td>
                         <th scope="row" class="text-center">조회수</th>
-                        <td>${ board.readcount }</td>
+                        <td>${ boardVO.readcount }</td>
                     </tr>
-<%--                    <tr>--%>
-<%--                        <th scope="row" class="text-center">추천</th>--%>
-<%--                        <td class="text-primary">264</td>--%>
-<%--                        <th scope="row" class="text-center">비추천</th>--%>
-<%--                        <td class="text-danger">7</td>--%>
-<%--                        <th scope="row" class="text-center">댓글</th>--%>
-<%--                        <td>70</td>--%>
-<%--                    </tr>--%>
+                    <tr>
+                        <th scope="row" class="text-center">추천</th>
+                        <td class="text-primary">264</td>
+                        <th scope="row" class="text-center">비추천</th>
+                        <td class="text-danger">7</td>
+                        <th scope="row" class="text-center">댓글</th>
+                        <td>70</td>
+                    </tr>
                     <tr>
                         <th scope="row" class="text-center">내용</th>
                         <td colspan="5">
-                            <pre>${ board.content }</pre>
+                            <pre>${ boardVO.content }</pre>
                         </td>
                     </tr>
                     <tr>
                         <th scope="row" class="text-center">첨부파일</th>
                         <td colspan="5">
+
                             <c:choose>
-                                <c:when test="${ attachList.size() > 0 }">
+                                <c:when test="${ fn:length(attachList) > 0 }"><%-- 첨부파일 있으면 --%>
                                     <ul>
-                                    <c:forEach var="attach" items="${ attachList }">
-                                        <c:if test="${attach.filetype eq 'O'}">
-                                            <li>
-                                                <c:set var="fileCallPath" value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }"/>
-                                                <a href="javascript:location.href =  '/download?fileName=' + encodeURIComponent('${ fileCallPath }')">
-                                                        ${ attach.filename }
-                                                </a>
-                                            </li>
-                                        </c:if>
-                                        <c:if test="${ attach.filetype eq 'I' }">
-                                            <c:set var="fileCallPath" value="${ attach.uploadpath }/s_${ attach.uuid }_${ attach.filename }"/>
-                                            <c:set var="originPath" value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }"/>
-                                            <li>
-                                                <a href="/display?fileName=${ originPath }">
-                                                    <img src="/display?fileName=${ fileCallPath }">
-                                                        ${ attach.filename }
-                                                </a>
-                                            </li>
-                                        </c:if>
-                                    </c:forEach>
+
+                                        <c:forEach var="attach" items="${ attachList }">
+                                            <c:if test="${ attach.filetype eq 'O' }">
+                                                <li>
+                                                    <c:set var="fileCallPath" value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }" />
+                                                    <a href="/download?fileName=${ fileCallPath }">
+                                                            ${ attach.filename }
+                                                    </a>
+                                                </li>
+                                            </c:if>
+                                            <c:if test="${ attach.filetype eq 'I' }">
+                                                <c:set var="fileCallPath" value="${ attach.uploadpath }/s_${ attach.uuid }_${ attach.filename }" />
+                                                <c:set var="originPath" value="${ attach.uploadpath }/${ attach.uuid }_${ attach.filename }" />
+                                                <li>
+                                                    <a href="/display?fileName=${ originPath }">
+                                                        <img src="/display?fileName=${ fileCallPath }">
+                                                    </a>
+                                                </li>
+                                            </c:if>
+                                        </c:forEach>
+
                                     </ul>
                                 </c:when>
-                                <c:otherwise>
+                                <c:otherwise><%-- 첨부파일 없으면 --%>
                                     <span>첨부파일 없음</span>
                                 </c:otherwise>
                             </c:choose>
+
                         </td>
                     </tr>
                 </table>
 
 
                 <div class="text-right mt-4">
-<%--                    로그인--%>
+                    <%-- 로그인 사용자일때 --%>
                     <c:if test="${ not empty sessionScope.id }">
-                    <%--로그인 아이디와 글작성자 아이디가 같을 때--%>
-                        <c:if test="${ sessionScope.id eq board.mid }">
-                            <button type="button" class="btn btn-info btn-sm">
+                        <%-- 로그인 아이디와 글작성자 아이디가 같을때 --%>
+                        <c:if test="${ sessionScope.id eq boardVO.mid }">
+                            <button type="button" class="btn btn-info btn-sm" onclick="location.href = '/board/modify?num=${ boardVO.num }&pageNum=${ pageNum }';">
                                 <i class="material-icons align-middle">edit</i>
                                 <span class="align-middle">글수정</span>
                             </button>
-                            <button type="button" class="btn btn-info btn-sm ml-3">
+
+                            <button type="button" class="btn btn-info btn-sm ml-3" onclick="remove(event);">
                                 <i class="material-icons align-middle">delete</i>
                                 <span class="align-middle">글삭제</span>
                             </button>
                         </c:if>
+
                         <button type="button" class="btn btn-info btn-sm ml-3">
                             <i class="material-icons align-middle">reply</i>
                             <span class="align-middle">답글쓰기</span>
                         </button>
                     </c:if>
-                    <button type="button" class="btn btn-info btn-sm ml-3" onclick="location.href = '/board/list?pageNum=${ pageNum }'">
+
+                    <button type="button" class="btn btn-info btn-sm ml-3" onclick="location.href = '/board/list?pageNum=${ pageNum }';">
                         <i class="material-icons align-middle">list</i>
                         <span class="align-middle">글목록</span>
                     </button>
@@ -158,7 +164,7 @@
 
                     <ul class="list-unstyled mt-4">
                         <li class="media mb-2">
-                            <img src="${pageContext.request.contextPath}/resources/images/kirby1.jpg" width="50" height="50" class="mr-3 rounded-circle">
+                            <img src="/resources/images/kirby1.jpg" width="50" height="50" class="mr-3 rounded-circle">
                             <div class="media-body">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -167,9 +173,9 @@
                                     <div class="col-md-8">
                                         <div class="text-right text-secondary">
                                             <time class="comment-date">2021-07-23 15:07:24</time>
-                                            | <a href="#">삭제</a>
-                                            | <a href="#">수정</a>
-                                            | <a href="#">답글</a>
+                                            | <a href="#!">삭제</a>
+                                            | <a href="#!">수정</a>
+                                            | <a href="#!">답글</a>
                                         </div>
                                     </div>
                                 </div>
@@ -178,7 +184,7 @@
                         </li>
 
                         <li class="media mb-2">
-                            <img src="${pageContext.request.contextPath}/resources/images/kirby2.jpg" width="50" height="50" class="mr-3 rounded-circle">
+                            <img src="/resources/images/kirby2.jpg" width="50" height="50" class="mr-3 rounded-circle">
                             <div class="media-body">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -187,9 +193,9 @@
                                     <div class="col-md-8">
                                         <div class="text-right text-secondary">
                                             <time class="comment-date">2021-07-23 15:07:24</time>
-                                            | <a href="#">삭제</a>
-                                            | <a href="#">수정</a>
-                                            | <a href="#">답글</a>
+                                            | <a href="#!">삭제</a>
+                                            | <a href="#!">수정</a>
+                                            | <a href="#!">답글</a>
                                         </div>
                                     </div>
                                 </div>
@@ -199,7 +205,7 @@
 
                         <li class="media mb-2" style="margin-left: 40px;">
                             <i class="material-icons">subdirectory_arrow_right</i>
-                            <img src="${pageContext.request.contextPath}/resources/images/kirby4.jpg" width="50" height="50" class="mr-3 rounded-circle">
+                            <img src="/resources/images/kirby4.jpg" width="50" height="50" class="mr-3 rounded-circle">
                             <div class="media-body">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -208,9 +214,9 @@
                                     <div class="col-md-8">
                                         <div class="text-right text-secondary">
                                             <time class="comment-date">2021-07-23 15:07:24</time>
-                                            | <a href="#">삭제</a>
-                                            | <a href="#">수정</a>
-                                            | <a href="#">답글</a>
+                                            | <a href="#!">삭제</a>
+                                            | <a href="#!">수정</a>
+                                            | <a href="#!">답글</a>
                                         </div>
                                     </div>
                                 </div>
@@ -294,11 +300,35 @@
 
 
 
-<%--    include bottomFooter.jsp--%>
-<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp"/>
+<%-- include bottomFooter.jsp --%>
+<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp" />
 
-<%--    include javascript.js--%>
-<jsp:include page="/WEB-INF/views/include/javascripts.jsp"/>
 
+<%-- include javascripts.jsp --%>
+<jsp:include page="/WEB-INF/views/include/javascripts.jsp" />
+<script>
+    // 글삭제 버튼을 클릭했을 때 호출되는 함수
+    function remove(event) {
+        // 이벤트 소스(이벤트가 발생한 오브젝트)의 기본동작을 못하게 만듬
+        // 기본동작을 가진 대표적인 두 태그 : a 태그(클릭 못하게), form 태그(submit 못하게)
+        event.preventDefault();
+
+        let isRemove = confirm('이 글을 정말 삭제하시겠습니까?');
+        if (isRemove == true) {
+            location.href = '/board/remove?num=${ boardVO.num }&pageNum=${ pageNum }';
+        }
+    }
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

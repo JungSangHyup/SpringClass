@@ -42,6 +42,12 @@ public class BoardService {
         return boardMapper.deleteAll();
     }
 
+    @Transactional
+    public void deleteBoardAndAttaches(int num){
+        attachMapper.deleteAttachesByBno(num);
+        boardMapper.deleteBoardByNum(num);
+    }
+
     public List<BoardVO> getBoards() {
         return boardMapper.getBoards();
     }
@@ -49,7 +55,7 @@ public class BoardService {
     public Map<String, Object> getBoardAndAttaches(int num)
     {
         BoardVO boardVO = boardMapper.getBoard(num);
-        List<AttachVO> attachList = attachMapper.getAttachesByBoardBno(num);
+        List<AttachVO> attachList = attachMapper.getAttachesByBno(num);
 
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("boardVO", boardVO);
@@ -89,7 +95,12 @@ public class BoardService {
         boardMapper.updateReadcount(num);
     }
 
-
+    @Transactional
+    public void updateBoardAndInsterAttachesAndDeleteAttaches(BoardVO boardVO, List<AttachVO> newAttachList, List<String> delUuidList){
+        attachMapper.insertAttaches(newAttachList);
+        attachMapper.deleteAttachesByUuids(delUuidList);
+        boardMapper.updateBoard(boardVO);
+    }
 }
 
 
