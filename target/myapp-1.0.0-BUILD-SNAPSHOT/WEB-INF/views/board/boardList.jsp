@@ -83,6 +83,10 @@
                                 <tr>
                                     <td class="text-center">${ board.num }</td>
                                     <td>
+                                        <c:if test="${board.reLev > 0}"><%--답글임--%>
+                                            <span style="display: inline-block; width: ${board.reLev * 5} %"></span>
+                                            <i class="material-icons">subdirectory_arrow_right</i>
+                                        </c:if>
                                         <a href="/board/content?num=${ board.num }&pageNum=${ pageMaker.cri.pageNum}">${ board.subject }</a>
                                     </td>
                                     <td class="text-center">${ board.mid }</td>

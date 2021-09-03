@@ -214,6 +214,9 @@ public class BoardController {
 
 
     private void deleteAttachFiles(List<AttachVO> attachList) {
+        if(attachList == null || attachList.size() == 0) {
+            return ;
+        }
 
         String basePath = "C:/upload";
 
@@ -289,9 +292,16 @@ public class BoardController {
         // 2) 삭제할 첨부파일 삭제하기(썸네일 이미지도 삭제). 삭제파일정보 삭제리스트에 추가
         // ================== 첨부파일 삭제 ==================
         // 삭제할 첨부파일정보 리스트 가져오기
-        List<AttachVO> delAttachList = attachService.getAttachesByUuids(delUuidList);
 
-        deleteAttachFiles(delAttachList); // 첨부파일(썸네일도 삭제) 삭제하기
+
+        List<AttachVO> delAttachList = null;
+        if (delUuidList != null) {
+            delAttachList = attachService.getAttachesByUuids(delUuidList);
+            deleteAttachFiles(delAttachList); // 첨부파일(썸네일도 삭제) 삭제하기
+        }
+
+
+
 
         System.out.println("================ 첨부파일 삭제 완료 ================");
 
@@ -306,20 +316,43 @@ public class BoardController {
         System.out.println("================ 테이블 수정 완료 ================");
 
         rttr.addAttribute("num", boardVO.getNum());
+//        rttr.addAttribute("pageNum", pageNum);
+
+        return "redirect:/board/content?pageNum=" + pageNum;
+    } // modify
+
+    @GetMapping("/reply")
+    public String reply(@ModelAttribute("reRef") String reRef, @ModelAttribute("reLev") String reLev,
+                        @ModelAttribute("reSeq") String reSeq, @ModelAttribute("pageNum") String pageNum)
+    {
+        return "board/boardReplyWrite";
+    }
+
+    @PostMapping("/reply")
+    public String reply(List<MultipartFile> files, BoardVO boardVO, String pageNum,
+                        HttpServletRequest request, RedirectAttributes rttr) throws IOException
+    {
+        // insert할 새 글번호 가져오기
+        int num = boardService.nextNum();
+
+        // 첨부파일 업로드(썸네일 생성) 후 attacList 리턴
+        List<AttachVO> attachList = uploadFilesAndGetAttachList(files, num);
+
+
+        // ===== insert할 BoardVO 객체 데이터 설정 ======
+        boardVO.setNum(num);
+        boardVO.setReadcount(0);
+        boardVO.setRegDate(new Date());
+        boardVO.setIpaddr(request.getRemoteAddr()); // 사용자 IP 주소 저장
+
+        //boardService.register(boardVO);
+        boardService.addReplyAndAddAttaches(boardVO, attachList); // 주글 한개와 첨부파일 여러개 등록 - 트랜잭션 처리
+        //===============================================
+
+        // 리다이렉트시 서버에 전달할 데이터를 저장하면 스프링이 자동으로 쿼리스트링으로 변환하여 처리해줌
+        rttr.addAttribute("num", boardVO.getNum());
         rttr.addAttribute("pageNum", pageNum);
 
         return "redirect:/board/content";
-    } // modify
-
-
-
-
-
-
+    }
 }
-
-
-
-
-
-

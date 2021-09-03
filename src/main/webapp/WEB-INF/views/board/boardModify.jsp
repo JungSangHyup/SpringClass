@@ -53,7 +53,7 @@
 
             <!-- Contents area -->
             <div class="border border-info p-4 rounded">
-                <h5>게시판 새글쓰기</h5>
+                <h5>게시판 수정</h5>
 
                 <hr class="featurette-divider">
 
@@ -100,10 +100,6 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="material-icons align-middle">create</i>
                             <span class="align-middle">수정</span>
-                        </button>
-                        <button type="reset" class="btn btn-primary ml-3">
-                            <i class="material-icons align-middle">clear</i>
-                            <span class="align-middle">초기화</span>
                         </button>
                         <button type="button" class="btn btn-primary ml-3" onclick="location.href = '/board/list?pageNum=${ pageNum }';">
                             <i class="material-icons align-middle">list</i>

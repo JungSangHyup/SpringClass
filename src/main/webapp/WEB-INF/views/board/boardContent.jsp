@@ -142,7 +142,7 @@
                             </button>
                         </c:if>
 
-                        <button type="button" class="btn btn-info btn-sm ml-3">
+                        <button type="button" class="btn btn-info btn-sm ml-3" onclick="location.href = '/board/reply?reRef=${ boardVO.reRef }&reLev=${ boardVO.reLev }&reSeq=${ boardVO.reSeq }&pageNum=${ pageNum }';">
                             <i class="material-icons align-middle">reply</i>
                             <span class="align-middle">답글쓰기</span>
                         </button>

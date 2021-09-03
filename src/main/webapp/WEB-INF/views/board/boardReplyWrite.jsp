@@ -1,24 +1,15 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jsh1703
-  Date: 2021-08-23
-  Time: 오후 2:24
-  To change this template use File | Settings | File Templates.
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <%-- include head.jsp --%>
-    <jsp:include page="/WEB-INF/views/include/head.jsp"/>
-    <title>BoardWrite</title>
+    <jsp:include page="/WEB-INF/views/include/head.jsp" />
 </head>
 <body>
-    <%-- include topNavbar.jsp --%>
-    <jsp:include page="/WEB-INF/views/include/topNavbar.jsp"/>
+<%-- include topNavbar.jsp --%>
+<jsp:include page="/WEB-INF/views/include/topNavbar.jsp" />
+
 
 
 <!-- middle container -->
@@ -53,45 +44,45 @@
 
             <!-- Contents area -->
             <div class="border border-info p-4 rounded">
-                <h5>게시판 수정</h5>
+                <h5>게시판 답글쓰기</h5>
 
                 <hr class="featurette-divider">
 
-                <form action="/board/modify" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="num" value="${ board.num }">
+                <form action="/board/reply" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="pageNum" value="${ pageNum }">
+                    <input type="hidden" name="reRef" value="${ reRef }">
+                    <input type="hidden" name="reLev" value="${ reLev }">
+                    <input type="hidden" name="reSeq" value="${ reSeq }">
+
                     <div class="form-group">
-                        <label for="mid">아이디</label>
-                        <input type="text" class="form-control" id="mid" aria-describedby="idHelp" name="mid" value='${ sessionScope.id }' readonly>
+                        <label for="id">아이디</label>
+                        <input type="text" class="form-control" id="id" aria-describedby="idHelp" name="mid" value="${ sessionScope.id }" readonly>
                     </div>
 
                     <div class="form-group">
                         <label for="subject">제목</label>
-                        <input type="text" class="form-control" id="subject" name="subject" value="${board.subject}" autofocus>
+                        <input type="text" class="form-control" id="subject" name="subject" autofocus>
                     </div>
 
                     <div class="form-group">
                         <label for="content">내용</label>
-                        <textarea class="form-control" id="content" rows="10" name="content" >${board.content}</textarea>
+                        <textarea class="form-control" id="content" rows="10" name="content"></textarea>
                     </div>
 
 
-                    <button type="button" class="btn btn-primary" id="btnAddFile">파일 추가</button>
+                    <button type="button" class="btn btn-primary my-3" id="btnAddFile">파일 추가</button>
+
 
                     <div><span>첨부 파일</span></div>
-                    <%--기존 첨부파일 영역--%>
-                    <div id="oldFileBox">
-                        <c:forEach var="attach" items="${attachList}">
-                            <input type="hidden" name="oldfile" value="${attach.uuid}">
-                            <div>
-                                <span>${ attach.filename }</span>
-                                <button type="button" class="btn btn-primary btn-sm delete-oldfile">
-                                    <i class="material-icons-outlined">삭제</i>
-                                </button>
-                            </div>
-                        </c:forEach>
-                    </div>
-                    <%--신규 첨부파일 영역--%>
-                    <div id="newFileBox">
+                    <div id="fileBox">
+
+                        <div class="my-2">
+                            <input type="file" name="files" multiple>
+                            <button type="button" class="btn btn-primary btn-sm delete-file">
+                                <i class="material-icons align-middle">clear</i>
+                                <span class="align-middle">삭제</span>
+                            </button>
+                        </div>
 
                     </div>
 
@@ -99,7 +90,11 @@
                     <div class="my-4 text-center">
                         <button type="submit" class="btn btn-primary">
                             <i class="material-icons align-middle">create</i>
-                            <span class="align-middle">수정</span>
+                            <span class="align-middle">답글등록</span>
+                        </button>
+                        <button type="reset" class="btn btn-primary ml-3">
+                            <i class="material-icons align-middle">clear</i>
+                            <span class="align-middle">초기화</span>
                         </button>
                         <button type="button" class="btn btn-primary ml-3" onclick="location.href = '/board/list?pageNum=${ pageNum }';">
                             <i class="material-icons align-middle">list</i>
@@ -107,6 +102,7 @@
                         </button>
                     </div>
                 </form>
+
             </div>
             <!-- end of Contents area -->
         </div>
@@ -117,25 +113,16 @@
 
 
 
-    <%--    include bottomFooter.jsp--%>
-    <jsp:include page="/WEB-INF/views/include/bottomFooter.jsp"/>
+<%-- include bottomFooter.jsp --%>
+<jsp:include page="/WEB-INF/views/include/bottomFooter.jsp" />
 
-    <%--    include javascript.js--%>
-    <jsp:include page="/WEB-INF/views/include/javascripts.jsp"/>
+
+<%-- include javascripts.jsp --%>
+<jsp:include page="/WEB-INF/views/include/javascripts.jsp" />
     <script>
         const MAX_FILE_COUNT = 5;
-        let fileCount = ${ fn:length(attachList) };
+        let fileCount = 0;
 
-        document.querySelectorAll('.delete-oldfile').forEach(
-            (e) => {
-                e.addEventListener('click',
-                    () => {
-                        e.parentElement.previousElementSibling.setAttribute('name', 'delfile');
-                        e.parentElement.remove();
-                        fileCount--;
-                    })
-            }
-        )
 
         document.querySelector('#btnAddFile').addEventListener('click',
             () => {
@@ -144,20 +131,21 @@
                     return;
                 }
 
-                document.querySelector('#newFileBox').innerHTML += `
+                document.querySelector('#fileBox').innerHTML += `
                     <div class="my-2">
                         <input type="file" class="form-control-file" id="exampleFormControlFile1" name="files">
-                        <button type="button" class="btn btn-primary btn-sm delete-newfile">
+                        <button type="button" class="btn btn-primary btn-sm delete-file">
                             <i class="material-icons-outlined">삭제</i>
                         </button>
                     </div>
                 `;
 
-                document.querySelectorAll('.delete-newfile').forEach(
+                document.querySelectorAll('.delete-file').forEach(
                     (e) => {
                         e.addEventListener('click',
                             () => {
                                 e.parentElement.remove();
+                                e.remove();
                                 fileCount--;
                             })
                     }

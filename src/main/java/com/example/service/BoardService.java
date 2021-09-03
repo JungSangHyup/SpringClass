@@ -31,7 +31,9 @@ public class BoardService {
     @Transactional
     public void registerBoardAndAttaches(BoardVO boardVO, List<AttachVO> attachList) {
         boardMapper.insert(boardVO);
-        attachMapper.insertAttaches(attachList);
+        if(attachList != null && attachList.size() > 0){
+            attachMapper.insertAttaches(attachList);
+        }
     }
 
     public int nextNum() {
@@ -97,9 +99,30 @@ public class BoardService {
 
     @Transactional
     public void updateBoardAndInsterAttachesAndDeleteAttaches(BoardVO boardVO, List<AttachVO> newAttachList, List<String> delUuidList){
-        attachMapper.insertAttaches(newAttachList);
-        attachMapper.deleteAttachesByUuids(delUuidList);
+        if(newAttachList != null && newAttachList.size() > 0){
+            attachMapper.insertAttaches(newAttachList);
+        }
+        if(delUuidList != null && delUuidList.size() > 0){
+            attachMapper.deleteAttachesByUuids(delUuidList);
+        }
         boardMapper.updateBoard(boardVO);
+    }
+
+    @Transactional
+    public void addReplyAndAddAttaches(BoardVO boardVO, List<AttachVO> attachList){
+
+        boardMapper.nextReSeq(boardVO.getReRef(), boardVO.getReSeq());
+        System.out.println("다음 시퀀스");
+        boardVO.setReLev(boardVO.getReLev() + 1);
+        boardVO.setReSeq(boardVO.getReSeq() + 1);
+
+        boardMapper.insert(boardVO);
+        System.out.println("넣기");
+
+        if(attachList != null && attachList.size() > 0){
+            attachMapper.insertAttaches(attachList);
+            System.out.println("파일업로드");
+        }
     }
 }
 
