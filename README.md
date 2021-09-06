@@ -2,14 +2,6 @@
 
 2021.08.23 ~ 진행 중
 
-23일 ~ jsp 뷰 페이지 작성
-
-홈 - 
-
-멤버 - 
-
-게시판 -  
-
 
 
 ## 프로젝트 관리
@@ -55,6 +47,8 @@ jstl // JSP 내 템플릿 엔진
 ```
 lombok // Getter, Setter 관련 편리한 기능 제공
 thumbnailator // 이미지 파일 업로드시 자그마한 이미지로 가공해줌
+quartz // 배치 프로그램
+quartz-jobs
 ```
 
 
@@ -118,6 +112,12 @@ WEB-INF : 톰캣내 설정이나 뷰가 위치함
 root-context.xml : 디비 관련 설정이 들어 있음
 
 servlet-context : Servlet 설정 관련 내용 저장됨
+
+views : 프론트 페이지
+
+
+
+
 
  
 

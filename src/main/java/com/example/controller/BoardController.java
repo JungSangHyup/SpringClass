@@ -70,13 +70,11 @@ public class BoardController {
         // 글 한개 가져오기
         //BoardVO boardVO = boardService.getBoard(num);
         // 게시글 한개와 게시글에 첨부된 첨부파일정보 여러개 가져오기
-        Map<String, Object> map = boardService.getBoardAndAttaches(num);
-        BoardVO boardVO = (BoardVO) map.get("boardVO");
-        List<AttachVO> attachList = (List<AttachVO>) map.get("attachList");
+        BoardVO boardVO = boardService.getBoardAndAttaches(num);
 
         model.addAttribute("boardVO", boardVO);
-        model.addAttribute("attachList", attachList);
-        model.addAttribute("attachCount", attachList.size());
+        model.addAttribute("attachList", boardVO.getAttachList());
+        model.addAttribute("attachCount", boardVO.getAttachList().size());
         //model.addAttribute("pageNum", pageNum);
 
         return "board/boardContent";
@@ -266,13 +264,11 @@ public class BoardController {
     @GetMapping("/board/modify")
     public String modifyForm(int num, @ModelAttribute("pageNum") String pageNum, Model model) {
 
-        Map<String, Object> map = boardService.getBoardAndAttaches(num);
+        BoardVO boardVO = boardService.getBoardAndAttaches(num);
 
-        BoardVO boardVO = (BoardVO) map.get("boardVO");
-        List<AttachVO> attachList = (List<AttachVO>) map.get("attachList");
 
         model.addAttribute("board", boardVO);
-        model.addAttribute("attachList", attachList);
+        model.addAttribute("attachList", boardVO.getAttachList());
         //model.addAttribute("pageNum", pageNum); // @ModelAttribute 애노테이션으로 처리함과 동일
 
         return "board/boardModify";

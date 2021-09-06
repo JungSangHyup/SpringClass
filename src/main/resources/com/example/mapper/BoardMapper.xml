@@ -102,16 +102,56 @@
 		]]>
 	</select>
 
-	<select id="getBoardAndAttaches" resultType="boardVO">
-		<![CDATA[
+	<select id="getBoardAndAttaches" resultMap="boardAndAttaches">
+	<![CDATA[
 		SELECT b.num, b.mid, b.subject, b.content, b.readcount, b.reg_date,
-		       b.ipaddr, b.re_ref, b.re_lev, b.re_seq,
-		       a.uuid, a.uploadpath, a.filename, a.filetype, a.bno
+			   b.ipaddr, b.re_ref, b.re_lev, b.re_seq,
+			   a.uuid, a.uploadpath, a.filename, a.filetype, a.bno
 		FROM board b LEFT OUTER JOIN attach a
-		ON b.num = a.bno
-		WHERE num = #{ num }
+									 ON b.num = a.bno
+		WHERE num = #{num}
 		]]>
 	</select>
+	<resultMap type="boardVO" id="boardAndAttaches">
+		<id column="num" property="num"/>
+		<result column="mid" property="mid"/>
+		<result column="subject" property="subject"/>
+		<result column="content" property="content"/>
+		<result column="readcount" property="readcount"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="ipaddr" property="ipaddr"/>
+		<result column="re_ref" property="reRef"/>
+		<result column="re_lev" property="reLev"/>
+		<result column="re_seq" property="reSeq"/>
+		<collection property="attachList" javaType="list" ofType="attachVO">
+			<id column="uuid" property="uuid"/>
+			<result column="uploadpath" property="uploadpath"/>
+			<result column="filename" property="filename"/>
+			<result column="filetype" property="filetype"/>
+			<result column="bno" property="bno"/>
+		</collection>
+	</resultMap>
+
+
+<!--	<resultMap id="getboardAndAttaches" type="boardVO">-->
+<!--		<id column="num" property="num"/>-->
+<!--		<result column="mid" property="mid"/>-->
+<!--		<result column="subject" property="subject"/>-->
+<!--		<result column="content" property="content"/>-->
+<!--		<result column="readcount" property="readcount"/>-->
+<!--		<result column="reg_date" property="regDate"/>-->
+<!--		<result column="ipaddr" property="ipaddr"/>-->
+<!--		<result column="re_ref" property="reRef"/>-->
+<!--		<result column="re_lev" property="reLev"/>-->
+<!--		<result column="re_seq" property="reSeq"/>-->
+<!--		<collection property="attachList" javaType="list" ofType="attachVO">-->
+<!--			<id column="uuid" property="uuid"/>-->
+<!--			<result column="uploadpath" property="uploadpath"/>-->
+<!--			<result column="filename" property="filename"/>-->
+<!--			<result column="filetype" property="filetype"/>-->
+<!--			<result column="bno" property="bno"/>-->
+<!--		</collection>-->
+<!--	</resultMap>-->
 
 
 

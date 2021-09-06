@@ -54,15 +54,19 @@ public class BoardService {
         return boardMapper.getBoards();
     }
 
-    public Map<String, Object> getBoardAndAttaches(int num)
-    {
-        BoardVO boardVO = boardMapper.getBoard(num);
-        List<AttachVO> attachList = attachMapper.getAttachesByBno(num);
+//    public Map<String, Object> getBoardAndAttaches(int num)
+//    {
+//        BoardVO boardVO = boardMapper.getBoard(num);
+//        List<AttachVO> attachList = attachMapper.getAttachesByBno(num);
+//
+//        Map<String, Object> map = new HashMap<String, Object>();
+//        map.put("boardVO", boardVO);
+//        map.put("attachList", attachList);
+//        return map;
+//    }
 
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("boardVO", boardVO);
-        map.put("attachList", attachList);
-        return map;
+    public BoardVO getBoardAndAttaches(int num){
+        return boardMapper.getBoardAndAttaches(num);
     }
 
     // 페이징으로 글 가져오기

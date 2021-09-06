@@ -17,6 +17,7 @@
         <org.springframework-version>5.2.16.RELEASE</org.springframework-version>
         <org.aspectj-version>1.6.10</org.aspectj-version>
         <org.slf4j-version>1.6.6</org.slf4j-version>
+        <org.quartz-version>2.3.2</org.quartz-version>
     </properties>
 
     <!-- 의존성 라이브러리 명시 -->
@@ -102,7 +103,7 @@
         </dependency>
 
 
-
+<!--    util-->
         <!-- AspectJ -->
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -117,6 +118,23 @@
             <version>${org.aspectj-version}</version>
             <scope>runtime</scope>
         </dependency>
+
+    <!--quartz-->
+        <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${org.quartz-version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz-jobs -->
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>${org.quartz-version}</version>
+        </dependency>
+
+
 
 
         <!-- Logging -->
