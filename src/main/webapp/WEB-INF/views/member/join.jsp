@@ -145,5 +145,46 @@
 <%-- include javascripts.jsp --%>
 <jsp:include page="/WEB-INF/views/include/javascripts.jsp" />
 
+<script>
+    document.getElementById('id').addEventListener('focusout', (e) => {
+        let id = e.target.value;
+        if (id.length == 0) {
+            return;
+        }
+
+        // ajax 함수 호출
+        fetch('/api/members/' + id + '.json')
+            .then((data) => {
+                console.log(typeof data);  // object
+                console.log(data);  // {}
+
+                if (data.count == 0) {
+                    $('small#idHelp').html('사용가능한 아이디 입니다.')
+                        .removeClass('text-muted').removeClass('text-danger')
+                        .addClass('text-success');
+                    console.log('사용 가능');
+                } else { // data.count == 1
+                    $('small#idHelp').html('이미 사용중인 아이디 입니다.')
+                        .removeClass('text-muted').removeClass('text-success')
+                        .addClass('text-danger');
+                    console.log('사용이 불가능함');
+                }
+            })
+        .catch((err) => {
+            alert('code: ' + err.status + '\n message: ' + err.responseText + '\n error: ' + err);
+        })
+    });
+</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

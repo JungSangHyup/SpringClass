@@ -2,6 +2,7 @@ package com.example.mapper;
 
 import com.example.domain.AttachVO;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -13,6 +14,9 @@ public interface AttachMapper {
     List<AttachVO> getAttachesByBno(int bno);
 
     List<AttachVO> getAttachesByUuids(List<String> uuidList);
+
+    @Select("SELECT * FROM attach WHERE uploadpath = #{uploadpath}")
+    List<AttachVO> getAttachesByUploadpath(String uploadpath);
 
     @Delete("DELETE FROM attach WHERE bno = #{bno}")
     int deleteAttachesByBno(int bno);
