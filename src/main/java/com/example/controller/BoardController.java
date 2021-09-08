@@ -281,39 +281,39 @@ public class BoardController {
 
         // 1) 신규 첨부파일 업로드하기. 신규파일정보 신규리스트에 추가.
         List<AttachVO> newAttachList = uploadFilesAndGetAttachList(files, boardVO.getNum());
-        System.out.println("================ 첨부파일 업로드 완료 ================");
+        System.out.println("================ POST modify - 첨부파일 업로드 완료 ================");
 
 
         // 2) 삭제할 첨부파일 삭제하기(썸네일 이미지도 삭제). 삭제파일정보 삭제리스트에 추가
         // ================== 첨부파일 삭제 ==================
         // 삭제할 첨부파일정보 리스트 가져오기
-
-
         List<AttachVO> delAttachList = null;
+
         if (delUuidList != null) {
             delAttachList = attachService.getAttachesByUuids(delUuidList);
+
             deleteAttachFiles(delAttachList); // 첨부파일(썸네일도 삭제) 삭제하기
         }
-
-
-
-
-        System.out.println("================ 첨부파일 삭제 완료 ================");
+        System.out.println("================ POST modify - 첨부파일 삭제 완료 ================");
 
 
         // 3) boardVO 준비해서  첨부파일 신규리스트, 삭제리스트와 함께
         //    테이블 글 수정(update)을 트랜잭션 단위로 처리
 
+        // ===== update할 BoardVO 객체 데이터 설정 ======
         boardVO.setRegDate(new Date());
         boardVO.setIpaddr(request.getRemoteAddr()); // 사용자 IP 주소 저장
 
+        // 글번호에 해당하는 글정보 수정. 첨부파일정보 수정(insert, delete) - 트랜잭션 단위 처리
         boardService.updateBoardAndInsterAttachesAndDeleteAttaches(boardVO, newAttachList, delUuidList);
-        System.out.println("================ 테이블 수정 완료 ================");
+        System.out.println("================ POST modify - 테이블 수정 완료 ================");
 
+        // 리다이렉트 쿼리스트링 정보 설정
         rttr.addAttribute("num", boardVO.getNum());
-//        rttr.addAttribute("pageNum", pageNum);
+        rttr.addAttribute("pageNum", pageNum);
 
-        return "redirect:/board/content?pageNum=" + pageNum;
+        // 상세보기 화면으로 리다이렉트 이동
+        return "redirect:/board/content";
     } // modify
 
     @GetMapping("/reply")

@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jsh1703
-  Date: 2021-08-23
-  Time: 오후 2:22
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ko" class="h-100">
@@ -12,10 +5,8 @@
     <%-- include head.jsp --%>
     <jsp:include page="/WEB-INF/views/include/head.jsp"/>
     <title>Login</title>
-
 </head>
 <body class="text-center">
-
 
 <form class="form-passwd" action="/member/passwd" method="POST">
     <a href="/index.jsp" title="Home으로 가기">

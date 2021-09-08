@@ -47,7 +47,19 @@
 
                 <hr class="featurette-divider">
 
+                <div class="my-2 profilePic">
+                    <h5>프로필 사진</h5>
+                    <input type="file" class="form-control-file" id="profilePicSelect" name="profilePic">
+                </div>
+
                 <form action="/member/modify" method="POST">
+                    <div class="form-group">
+                        <label for="name">
+                            <i class="material-icons align-middle">person</i>
+                            <span class="align-middle">아이디</span>
+                        </label>
+                        <input type="text" class="form-control" id="id" name="name" value="${sessionScope.id}" disabled>
+                    </div>
                     <div class="form-group">
                         <label for="name">
                             <i class="material-icons align-middle">person</i>
@@ -84,7 +96,6 @@
                         </label>
                         <input type="email" class="form-control" id="email" name="email">
                     </div>
-
                     <div class="text-center">
                         <label class="mr-3">이벤트 등 알림 메일 수신동의 : </label>
                         <div class="custom-control custom-radio custom-control-inline">
@@ -119,34 +130,26 @@
 <%-- include javascripts.jsp --%>
 <jsp:include page="/WEB-INF/views/include/javascripts.jsp" />
 
-<script>
-    document.getElementById('id').addEventListener('focusout', (e) => {
-        let id = e.target.value;
-        if (id.length == 0) {
-            return;
+<script defer>
+    document.getElementById('profilePicSelect').addEventListener('change', (e) => {
+        let file = e.target.files[0]; //선택된 파일
+        console.log(file);
+        let reader = new FileReader();
+        reader.readAsDataURL(file); //파일을 읽는 메서드
+
+        reader.onload = function(){
+            let photoFrame = document.createElement("div");
+            let profileFrame = document.querySelector('.photoFrame');
+
+            if(profileFrame){
+                profileFrame.style = 'background : url(' + reader.result + '); background-size : cover; width: 250px; height: 250px;';
+            }else{
+                photoFrame.style = 'background : url(' + reader.result + '); background-size : cover; width: 250px; height: 250px;';
+                photoFrame.className = "photoFrame";
+                document.querySelector('.profilePic').appendChild(photoFrame);
+            }
+            e.target.value = "";
         }
-
-        // ajax 함수 호출
-        fetch('/api/members/' + id + '.json')
-            .then((data) => {
-                console.log(typeof data);  // object
-                console.log(data);  // {}
-
-                if (data.count == 0) {
-                    $('small#idHelp').html('사용가능한 아이디 입니다.')
-                        .removeClass('text-muted').removeClass('text-danger')
-                        .addClass('text-success');
-                    console.log('사용 가능');
-                } else { // data.count == 1
-                    $('small#idHelp').html('이미 사용중인 아이디 입니다.')
-                        .removeClass('text-muted').removeClass('text-success')
-                        .addClass('text-danger');
-                    console.log('사용이 불가능함');
-                }
-            })
-            .catch((err) => {
-                alert('code: ' + err.status + '\n message: ' + err.responseText + '\n error: ' + err);
-            })
     });
 </script>
 </body>

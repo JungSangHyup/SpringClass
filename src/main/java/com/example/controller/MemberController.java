@@ -1,12 +1,22 @@
 package com.example.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.example.domain.AttachVO;
+import com.example.domain.ProfilePicVO;
+import net.coobird.thumbnailator.Thumbnailator;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +31,7 @@ import com.example.domain.MemberVO;
 import com.example.mapper.MemberMapper;
 import com.example.service.MemberService;
 import com.example.util.Script;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Controller // @Component 계열 애노테이션
@@ -228,7 +239,7 @@ public class MemberController {
     }
 
     @PostMapping("/modify")
-    public ResponseEntity<String> modify(String newid, String name, String birthday, String gender, String email, String recvEmail, HttpSession session) {
+    public ResponseEntity<String> modify(String name, String birthday, String gender, String email, String recvEmail, HttpSession session) {
         String oldid = (String) session.getAttribute("id");
         MemberVO memberVO = memberService.getMemberById(oldid);
 
@@ -298,9 +309,7 @@ public class MemberController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "text/html; charset=UTF-8");
 
-        message = "탈퇴하였습니다.";
-
-        String str = Script.back(message);
+        String str = Script.href("탈퇴하였습니다.", "/");
         session.invalidate();
 
         return new ResponseEntity<String>(str, headers, HttpStatus.OK);

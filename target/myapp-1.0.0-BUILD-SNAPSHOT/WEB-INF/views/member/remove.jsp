@@ -28,7 +28,7 @@
     <input type="password" name="passwd2" id="passwd2" class="form-control" placeholder="비밀번호" required>
 
     <p id="message">비밀번호를 입력하세요</p>
-    <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="removeConfirm()">
+    <button class="btn btn-lg btn-primary btn-block" type="submit" onclick="removeConfirm(event)">
         <i class="material-icons align-middle">login</i>
         <span class="align-middle">탈퇴</span>
     </button>
@@ -53,14 +53,12 @@
         }
     }
 
-    function removeConfirm(){
+    function removeConfirm(event){
         let con = confirm("정말로 탈퇴하시겠습니까?")
         if(!con){
-            history.back(-1);
-            return;
-        }else {
-
+            event.preventDefault();
         }
+        return;
     }
 
     document.querySelector('#newPassword1').addEventListener('focusout', (e) => {
