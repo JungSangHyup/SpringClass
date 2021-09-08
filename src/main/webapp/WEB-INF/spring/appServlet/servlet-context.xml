@@ -39,6 +39,7 @@
             <mapping path="/board/*"/>
             <exclude-mapping path="/board/list"/>
             <exclude-mapping path="/board/content"/>
+            <exclude-mapping path="/board/gallery"/>
             <beans:ref bean="loginCheckInterceptor" />
         </interceptor>
     </interceptors>

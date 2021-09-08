@@ -52,6 +52,14 @@
 		</foreach>
 	</delete>
 
+	<select id="getAllImages" resultType="attachVO">
+		<![CDATA[
+		SELECT *
+		FROM attach
+		WHERE filetype = 'I';
+		]]>
+	</select>
+
 
 </mapper>
 

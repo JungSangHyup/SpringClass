@@ -21,6 +21,10 @@ public class AttachService {
     public List<AttachVO> getAttachesByUuids(List<String> uuidList) {
         return attachMapper.getAttachesByUuids(uuidList);
     }
+
+    public List<AttachVO> getAllImages(){
+        return attachMapper.getAllImages();
+    }
 }
 
 

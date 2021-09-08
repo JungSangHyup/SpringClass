@@ -29,4 +29,6 @@ public interface MemberMapper {
             "SET passwd = #{passwd}, name = #{name}, birthday = #{birthday}, gender = #{gender}, email = #{email}, recv_email = #{recvEmail}, reg_date = #{regDate}" +
             "WHERE id = #{id}")
     void updateMember(MemberVO memberVO);
+
+
 }

@@ -2,23 +2,21 @@ package com.example.util;
 
 public class Script {
 
-    public static String href(String message, String path){
+    public static String href(String alertMessage, String locationPath) {
         StringBuilder sb = new StringBuilder();
-
         sb.append("<script>");
-        sb.append("alert('" + message + "');");
-        sb.append("locaion.href = '" + path + "';");
-        sb.append("/<script>");
+        sb.append("alert('" + alertMessage + "');");
+        sb.append("location.href = '" + locationPath + "';"); // 특정 이동경로로 요청
+        sb.append("</script>");
         return sb.toString();
     }
 
-    public static String back(String message){
+    public static String back(String alertMessage) {
         StringBuilder sb = new StringBuilder();
-
         sb.append("<script>");
-        sb.append("alert('" + message + "');");
-        sb.append("history.back();");
-        sb.append("/<script>");
+        sb.append("alert('" + alertMessage + "');");
+        sb.append("history.back();"); // 뒤로가기
+        sb.append("</script>");
         return sb.toString();
     }
 }

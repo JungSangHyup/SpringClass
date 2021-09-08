@@ -85,6 +85,8 @@ public class BoardService {
         return boardMapper.getBoardsWithPaging(cri);
     }
 
+
+
     public int getTotalCount() {
         return boardMapper.getTotalCount();
     }

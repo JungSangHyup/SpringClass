@@ -2,6 +2,7 @@ package com.example.mapper;
 
 import java.util.List;
 
+import com.example.domain.AttachVO;
 import com.example.domain.BoardVO;
 import com.example.domain.Criteria;
 import org.apache.ibatis.annotations.Param;
@@ -18,6 +19,8 @@ public interface BoardMapper {
     int deleteBoardByNum(int num); // 글 번호에 해당하는 글 한 개 삭제하기
 
     List<BoardVO> getBoards();  // 전체 게시글 내용 가져오기
+
+
 
     List<BoardVO> getBoardsWithPaging(Criteria cri);  // 페이징으로 게시글 내용 가져오기
 
@@ -36,6 +39,8 @@ public interface BoardMapper {
     
     // 매개변수가 2개 이상일 경우, 각 매개변수마다 SQL 문에서 사용할 이름을 지정해야함
     void nextReSeq(@Param("reRef") int reRef, @Param("reSeq") int reSeq);
+
+
 }
 
 

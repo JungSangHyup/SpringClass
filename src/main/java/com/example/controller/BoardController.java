@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -350,5 +349,14 @@ public class BoardController {
         rttr.addAttribute("pageNum", pageNum);
 
         return "redirect:/board/content";
+    }
+
+    @GetMapping("/gallery")
+    String gallery(@ModelAttribute("pageNum") String pageNum, Model model){
+        List<AttachVO> imageList = (List<AttachVO>) attachService.getAllImages();
+
+        model.addAttribute("imageList", imageList);
+        model.addAttribute("imageCount", imageList.size());
+        return "board/boardGallery";
     }
 }

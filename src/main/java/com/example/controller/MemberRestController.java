@@ -10,7 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.domain.MemberVO;
 import com.example.service.MemberService;
@@ -53,24 +60,67 @@ public class MemberRestController {
 		return new ResponseEntity<List<MemberVO>>(memberList, HttpStatus.OK);
 	} // getAll
 
-	@PostMapping(value = "/members")
-	public void create(@RequestBody MemberVO memberVO){ // JSON의 바디영역을 읽어들임
+
+
+	@PostMapping(value = "/members",
+			consumes = "application/json",
+			produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<MemberVO> create(@RequestBody MemberVO memberVO) {
+
 		// 비밀번호 암호화
 		String hashedPw = BCrypt.hashpw(memberVO.getPasswd(), BCrypt.gensalt());
 		memberVO.setPasswd(hashedPw);
 
-		// 생년월일 구분자 제거
-		String birthday = memberVO.getBirthday().replace("-", "");
-		
+		// 생년월일 구분자("-") 제거
+		String birthday = memberVO.getBirthday(); // "2021-09-07"
+		birthday = birthday.replace("-", "");
+		memberVO.setBirthday(birthday);
+
 		// 현재날짜 설정
 		memberVO.setRegDate(new Date());
 
 		// 회원 등록하기
 		memberService.register(memberVO);
-	}
+
+		// insert된 VO 객체를 OK 상태코드와 함께 응답으로 줌
+		return new ResponseEntity<MemberVO>(memberVO, HttpStatus.OK);
+	} // create
+
+
+	@DeleteMapping(value = "/members/{id}", produces = MediaType.TEXT_PLAIN_VALUE)
+	public ResponseEntity remove(@PathVariable("id") String id) {
+
+		int count = memberService.deleteMemberById(id);
+
+		// BAD_GATEWAY (502) : 외부에서 전달받은 값이 잘못되어 오류가 발생한 경우
+		// INTERNAL_SERVER_ERROR (500) : 서버 내부 로직 문제로 오류가 발생한 경우
+
+		return (count > 0)
+				? new ResponseEntity(HttpStatus.OK)
+				: new ResponseEntity(HttpStatus.BAD_GATEWAY);
+	} // remove
 
 
 
+	@PutMapping(value = "/members/{id}",
+			consumes = "application/json",
+			produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+	public ResponseEntity<MemberVO> modify(@RequestBody MemberVO memberVO) {
+
+		// 비밀번호 암호화
+		String hashedPw = BCrypt.hashpw(memberVO.getPasswd(), BCrypt.gensalt());
+		memberVO.setPasswd(hashedPw);
+
+		// 생년월일 구분자("-") 제거
+		String birthday = memberVO.getBirthday(); // "2021-09-07"
+		birthday = birthday.replace("-", "");
+		memberVO.setBirthday(birthday);
+
+		memberService.updateMember(memberVO);
+
+		// update된 VO 객체를 OK 상태코드와 함께 응답으로 줌
+		return new ResponseEntity<MemberVO>(memberVO, HttpStatus.OK);
+	} // modify
 
 }
 

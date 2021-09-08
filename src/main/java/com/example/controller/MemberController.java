@@ -1,9 +1,14 @@
 package com.example.controller;
 
-import com.example.domain.MemberVO;
-import com.example.service.MemberService;
-import com.example.util.Script;
+import java.util.Date;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,18 +17,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.Date;
+import com.example.domain.MemberVO;
+import com.example.mapper.MemberMapper;
+import com.example.service.MemberService;
+import com.example.util.Script;
+
 
 @Controller // @Component 계열 애노테이션
 @RequestMapping("/member/*")
 public class MemberController {
 
     private MemberService memberService;
-
 
     // @Autowired 애노테이션이 생성자에서는 생략가능
     public MemberController(MemberService memberService) {
@@ -142,11 +146,11 @@ public class MemberController {
 
     @GetMapping("/logout")
     public String logout(HttpSession session, HttpServletRequest request, HttpServletResponse response) {
-        if(session.getAttribute("id") == null){
-            return "redirect:/member/login";
-        }
+        // 사용자 로그인 권한 확인
+//		if (session.getAttribute("id") == null) { // 로그인 안한 사용자면
+//			return "redirect:/member/login";
+//		}
 
-        // 로그아웃 처리하기
 
         // 세션 비우기
         session.invalidate();
@@ -169,8 +173,138 @@ public class MemberController {
         return "redirect:/";
     }
 
+    @GetMapping("/passwd")
+    public String newPasswd(){
+        return "member/passwd";
+    }
 
 
+    @PostMapping("/passwd")
+    public ResponseEntity<String> newPasswd(String newPasswd, String oldPasswd, HttpSession session, HttpServletResponse response){
+        String id = (String) session.getAttribute("id");
+        MemberVO memberVO = memberService.getMemberById(id);
+
+        boolean isPasswdSame = false;
+        String message = "";
+
+        if (memberVO != null) {
+            isPasswdSame = BCrypt.checkpw(oldPasswd, memberVO.getPasswd());
+
+            if (isPasswdSame == false) { // 비밀번호 일치하지 않음
+                message = "비밀번호가 일치하지 않습니다.";
+            }
+        } else { // memberVO == null  // 일치하는 아이디가 없음
+            message = "존재하지 않는 아이디 입니다.";
+        }
+
+        // 로그인 실패시 (없는 아이디거나 비밀번호 틀렸을때)
+        if (memberVO == null || isPasswdSame == false) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "text/html; charset=UTF-8");
+
+            String str = Script.back(message);
+
+            return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+        }
+        
+//         모든 조건을 통과시 비밀번호를 변경함
+        String hasedPw = BCrypt.hashpw(newPasswd, BCrypt.gensalt());
+        memberVO.setPasswd(hasedPw);
+        memberService.updateMember(memberVO);
+        
+        System.out.println("비밀번호 변경 완료!");
+        
+        
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/"); // redirect 경로를 "/"로 지정
+        session.invalidate();
+        // 리다이렉트일 경우 HttpStatus.FOUND 로 지정해야 함
+        return new ResponseEntity<String>(headers, HttpStatus.FOUND);
+    }
+
+    @GetMapping("/modify")
+    public String modify(){
+        return "member/modify";
+    }
+
+    @PostMapping("/modify")
+    public ResponseEntity<String> modify(String newid, String name, String birthday, String gender, String email, String recvEmail, HttpSession session) {
+        String oldid = (String) session.getAttribute("id");
+        MemberVO memberVO = memberService.getMemberById(oldid);
+
+        memberVO.setName(name);
+        memberVO.setGender(gender);
+        memberVO.setEmail(email);
+        memberVO.setRecvEmail(recvEmail);
+        memberVO.setRegDate(new Date());
+
+        // 연월일 구분문자("-") 제거하기
+        birthday = birthday.replace("-", ""); // "20210825"
+        memberVO.setBirthday(birthday);
+
+        memberService.updateMember(memberVO); // 회원수정
+
+        // 서버에서 데이터를 추가,수정,삭제 후 화면응답을 바로 줄때는
+        // 새로고침 발생시 서버에 오류가 발생될수 있으므로
+        // 리다이렉트를 통해 사용자가 봐야될 화면 주소로 요청하게 만든다.
+        // "redirect:/member/login";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=UTF-8");
+
+        String str = Script.href("수정!", "/");
+
+        System.out.println("수정 성공하였습니다!");
+        System.out.println(memberVO);
+        return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/remove")
+    public String remove(){
+        return "member/remove";
+    }
+
+    @PostMapping("/remove")
+    public ResponseEntity<String> remove(HttpSession session, String passwd) {
+        String id = (String) session.getAttribute("id");
+        MemberVO memberVO = memberService.getMemberById(id);
+
+        boolean isPasswdSame = false;
+        String message = "";
+
+        if (memberVO != null) {
+            isPasswdSame = BCrypt.checkpw(passwd, memberVO.getPasswd());
+
+            if (isPasswdSame == false) { // 비밀번호 일치하지 않음
+                message = "비밀번호가 일치하지 않습니다.";
+            }
+        } else { // memberVO == null  // 일치하는 아이디가 없음
+            message = "존재하지 않는 아이디 입니다.";
+        }
+
+        if (memberVO == null || isPasswdSame == false) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "text/html; charset=UTF-8");
+
+            String str = Script.back(message);
+
+            return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+        }
+
+        memberService.deleteMemberById(id);
+        System.out.println("탈퇴되었습니다.");
+
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "text/html; charset=UTF-8");
+
+        message = "탈퇴하였습니다.";
+
+        String str = Script.back(message);
+        session.invalidate();
+
+        return new ResponseEntity<String>(str, headers, HttpStatus.OK);
+    }
 }
 
 

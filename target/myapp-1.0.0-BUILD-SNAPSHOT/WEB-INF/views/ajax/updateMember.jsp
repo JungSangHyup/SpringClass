@@ -15,25 +15,40 @@
 </head>
 <body>
 
-<h1>회원정보 한개 가져오기</h1>
+<h1>회원정보 추가하기</h1>
 <hr>
 
-<input type="text" placeholder="아이디 입력" id="id">
-<button type="button" id="btn">버튼</button>
-
-<ul></ul>
+<form id="frm">
+    아 이 디 : <input name="id" type="text">
+    비밀번호 : <input name="passwd" type="password">
+    이   름  : <input name="name" type="text">
+    생년월일  : <input name="birthday" type="date">
+    성   별  :
+    <select name="gender">
+        <option value="" disabled selected>성별을 선택하세요</option>
+        <option value="M">남자</option>
+        <option value="F">여자</option>
+        <option value="N">선택 안함</option>
+    </select>
+    이 메 일 : <input type="email" name="email">
+    수신여부 :
+    <label><input type="radio" name="recvEmail" value="Y" checked>예</label>
+    <label><input type="radio" name="recvEmail" value="N" checked>아니오</label>
+    <br>
+    <button type="submit" id="btn">회원가입</button>
+</form>
 
 <script src="/resources/js/jquery-3.6.0.js"></script>
 <script>
-    $('button#btn').on('click', function () {
-
+    $('form#frm').on('click', function (e) {
+        e.preventDefault();
         let id = $('#id').val();
         console.log('id : ' + id);
 
         // ajax 함수 호출 - 비동기 자바스크립트 통신
         $.ajax({
-            url: '/api/members/' + id + '.json',
-            method: 'GET',
+            url: '/api/members/' + obj.id,
+            method: 'PUT',
             success: function (data) {
                 console.log(typeof data);  // object
                 console.log(data);  // {}

@@ -15,6 +15,8 @@ public interface AttachMapper {
 
     List<AttachVO> getAttachesByUuids(List<String> uuidList);
 
+    List<AttachVO> getAllImages(); // 이미지 전체 들고오기
+
     @Select("SELECT * FROM attach WHERE uploadpath = #{uploadpath}")
     List<AttachVO> getAttachesByUploadpath(String uploadpath);
 
