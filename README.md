@@ -1,16 +1,16 @@
-# 스프링 레거시 프로젝트
+# Spring legacy Project
 
-2021.08.23 ~ 진행 중
-
-
-
-## 프로젝트 관리
+ 스프링 레거시를 통한 기초적 웹사이트 구축해보자
+ 
+ 글 올리기, 수정, 삭제, 파일 올리기, 댓글 작성
+ 
+## Skills
 
 스프링 레거시는 부트와 달리 xml로 직접 관리해야함
 
 현재 프로젝트는 maven으로 작성되었슴. mvn 에서 artifactId로 검색
 
-###### 스프링 관련
+###### Spring
 
 ```
 spring-context
@@ -20,21 +20,16 @@ spring-jdbc
 spring-tx
 ```
 
-###### 디비 관련
+###### Db
 
 ```
 mybatis
 mybatis-spring
 mysql-connector-java
-```
-
-###### 디비 커넥션 풀
-
-```
 HikariCP
 ```
 
-###### 서블릿
+###### Servlet
 
 ```
 javax.servlet-api
@@ -42,7 +37,7 @@ jsp-api
 jstl // JSP 내 템플릿 엔진
 ```
 
-###### 유틸
+###### Util
 
 ```
 lombok // Getter, Setter 관련 편리한 기능 제공
@@ -53,7 +48,7 @@ quartz-jobs
 
 
 
-## 프로젝트 구조
+## Structure
 
 #### ![경로](https://user-images.githubusercontent.com/51068026/131460770-c81c06d6-e4ab-4a92-be99-487f156df838.PNG)
 
